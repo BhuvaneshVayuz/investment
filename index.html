@@ -1,0 +1,884 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>what is investment ?</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================================
+   PALETTE — chosen against the actual assets, not a generic dark theme.
+
+   What the images actually are:
+     bondOrShare.jpg  cartoon fork-in-the-road: acid grass green, violet
+                      lightning, near-black indigo sky
+     promise.jpg      Patrick (SpongeBob): hot coral-pink body, lime-green
+                      shorts, cyan water
+     happy/sad.jpg    warm brown skin, dark maroon-violet crowd behind
+     buying.jpg       warm wood floor + cool grey wall + dollar green
+     kidSchool.png    dark green chalkboard + warm wood + pale skin tones
+     graph / patience fully desaturated cold grey on true black
+
+   The accents that recur across the set are VIOLET, HOT PINK and ACID LIME,
+   sitting on warm-to-neutral darks. A navy/teal base would fight the violet
+   lightning and go muddy behind Patrick's pink; a pure neutral black would
+   kill the warmth of the Kanye frames and the wood tones. So the base is a
+   very dark warm PLUM-BLACK: it reads as black next to the hospital greys,
+   lets pink/lime/violet sing, and stays in family with the cartoon frames.
+   The off-white is warmed so type never looks blue against brown skin
+   and wood. Amber is held back for the single closing line, where it is the
+   only warm thing on screen against the grey hospital photo.
+
+     --bg      #140c1b  deep plum-black base
+     --ink     #f6efe6  warm off-white — titles and body
+     --pink    #ff5c8a  primary accent   (Patrick, Kanye backdrop)
+     --lime    #c9ff4f  secondary accent (grass, Patrick's shorts)
+     --violet  #a97bff  tertiary accent  (lightning)
+     --amber   #ffc25c  closing line only
+   ========================================================================= */
+:root{
+  --bg:#140c1b;
+  --ink:#f6efe6;
+  --pink:#ff5c8a;
+  --lime:#c9ff4f;
+  --violet:#a97bff;
+  --amber:#ffc25c;
+
+  --display:"Bricolage Grotesque","Space Grotesk",system-ui,sans-serif;
+  --body:"Space Grotesk",system-ui,sans-serif;
+
+  --title:clamp(30px,3.9vw,68px);
+  --title-sm:clamp(24px,3.05vw,53px);
+  --big:clamp(30px,4.1vw,72px);
+  --read:clamp(17px,1.72vw,31px);
+  --line:clamp(20px,2.1vw,38px);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:var(--bg)}
+body{
+  font-family:var(--body);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+body.nocursor,body.nocursor *{cursor:none}
+img,video{display:block;-webkit-user-drag:none;user-select:none}
+
+/* ---- stage ------------------------------------------------------------- */
+#stage{
+  position:fixed;inset:0;overflow:hidden;
+  background:
+    radial-gradient(58vw 58vw at 14% 8%,  rgba(169,123,255,.17), transparent 62%),
+    radial-gradient(52vw 52vw at 88% 92%, rgba(255,92,138,.14),  transparent 62%),
+    radial-gradient(80vw 60vw at 50% 50%, rgba(201,255,79,.045), transparent 70%),
+    var(--bg);
+}
+#stage::after{                       /* static vignette — zero per-frame cost */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120vw 92vh at 50% 45%, transparent 44%, rgba(0,0,0,.55) 100%);
+}
+
+.scene{
+  --sg:clamp(16px,2.5vh,34px);
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:5vh 6vw;
+  gap:var(--sg);
+  visibility:hidden;
+  will-change:transform;
+  backface-visibility:hidden;
+}
+.stack{
+  display:flex;flex-direction:column;align-items:center;
+  gap:var(--sg);width:100%;
+  will-change:transform;
+}
+
+/* ---- type -------------------------------------------------------------- */
+.title{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--title);line-height:1.04;letter-spacing:-.022em;
+  text-align:center;text-wrap:balance;
+  max-width:min(88vw,26ch);
+  will-change:transform,opacity;
+}
+.title.sm{font-size:var(--title-sm);max-width:min(86vw,32ch)}
+.title em{font-style:normal;color:var(--pink)}
+
+.row{
+  display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;
+  gap:clamp(22px,4.4vw,92px);width:100%;
+}
+.word{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--big);line-height:1.06;letter-spacing:-.02em;
+  will-change:transform,opacity;
+}
+.c-pink{color:var(--pink)}
+.c-lime{color:var(--lime)}
+.c-violet{color:var(--violet)}
+
+/* ---- media slots: height reserved from the start, so nothing ever shifts */
+.media{position:relative;width:100%;height:var(--mh)}
+.slot{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  will-change:transform,opacity;
+}
+.slot>img,.slot>video{
+  max-width:min(100%,86vw);max-height:100%;width:auto;height:auto;
+  object-fit:contain;border-radius:18px;
+  box-shadow:0 34px 74px -22px rgba(0,0,0,.82),0 0 0 1px rgba(246,239,230,.07);
+}
+
+/* ---- scene 7: the two words get pinned (by JS, after measuring) so that
+       lifting "Bonds" out with Flip can never reflow "Shares" ------------- */
+.pair{position:relative;width:100%}
+.pair .word{white-space:nowrap}
+
+/* ---- scene 8 ----------------------------------------------------------- */
+.titlerow{position:relative;width:100%;height:calc(var(--title) * 1.1)}
+.tslot{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.as-title{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--title);line-height:1.04;letter-spacing:-.022em;
+}
+.sentence{
+  position:relative;width:min(56ch,72vw);
+  font-size:var(--read);line-height:1.62;font-weight:500;text-align:center;
+}
+.sentence .w{white-space:nowrap;will-change:transform,opacity}
+.w.key{color:var(--pink);font-weight:700}
+
+/* ---- scene 9 ----------------------------------------------------------- */
+.lines{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.9vh,12px)}
+.lines .ln{
+  font-family:var(--display);font-weight:700;
+  font-size:var(--line);line-height:1.26;letter-spacing:-.015em;
+  will-change:transform,opacity;
+}
+#s9mediaBox,#s8mediaBox{will-change:transform}
+#s9zoom{display:block}                        /* overrides .slot flex centring */
+.zshadow{                                     /* lives OUTSIDE the clip box   */
+  position:absolute;left:50%;top:50%;border-radius:18px;
+  box-shadow:0 34px 74px -22px rgba(0,0,0,.82);
+  transform-origin:50% 50%;
+}
+.zclip{position:absolute;inset:0}
+.nest{position:absolute;left:0;top:0;transform-origin:0 0;backface-visibility:hidden}
+.nest img{position:absolute;border-radius:0}
+.nest .pat{left:0;top:0;width:100%;height:100%}
+.nest .gra{will-change:opacity}
+.final{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--line);letter-spacing:-.018em;text-align:center;
+  color:var(--amber);text-wrap:balance;
+  will-change:transform,opacity;
+}
+
+/* ---- preloader: a dark screen, no text --------------------------------- */
+#pre{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;align-items:center;justify-content:center}
+#pre::before{
+  content:"";width:44vmin;height:44vmin;border-radius:50%;
+  background:radial-gradient(circle,rgba(169,123,255,.20),transparent 66%);
+  animation:breathe 2.4s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{transform:scale(.86);opacity:.45}50%{transform:scale(1.06);opacity:.95}}
+</style>
+
+<div id="stage">
+
+  <section class="scene" id="s1" style="--mh:46vh">
+    <h1 class="title">what is investment <em>?</em></h1>
+    <div class="media">
+      <div class="slot rv" id="s1media" data-kind="media"><img src="./assets/thinking-emoji.gif" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s2">
+    <h1 class="title">what should we invest <em>?</em></h1>
+    <div class="row">
+      <span class="word c-pink rv"   id="s2w0">time</span>
+      <span class="word c-lime rv"   id="s2w1">money</span>
+      <span class="word c-violet rv" id="s2w2">energy</span>
+    </div>
+  </section>
+
+  <section class="scene" id="s3">
+    <h1 class="title">what should we invest in <em>?</em></h1>
+    <div class="row">
+      <span class="word c-lime rv"   id="s3w0">health</span>
+      <span class="word c-pink rv"   id="s3w1">relationships</span>
+      <span class="word c-violet rv" id="s3w2">education</span>
+    </div>
+  </section>
+
+  <section class="scene" id="s4" style="--mh:50vh">
+    <h1 class="title sm">is sending your kids to school a good investment <em>?</em></h1>
+    <div class="media">
+      <div class="slot rv" id="s4media" data-kind="media"><img src="./assets/kidSchool.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s5" style="--mh:62vh">
+    <h1 class="title sm">or buying that school is better investment <em>?</em></h1>
+    <div class="media">
+      <div class="slot rv" id="s5media" data-kind="media"><img src="./assets/buying.jpg" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene" id="s6" style="--mh:64vh">
+    <h1 class="title sm">investments are subject to market risks</h1>
+    <div class="media">
+      <div class="slot rv" id="s6media" data-kind="media">
+        <video id="riskVid" src="./assets/risk.mp4" autoplay muted loop playsinline preload="auto"></video>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s7" style="--mh:44vh">
+    <h1 class="title sm" id="s7title">some of the popular options for financial investments are</h1>
+    <div class="media" id="s7mediaBox">
+      <div class="slot rv" id="s7media" data-kind="media"><img src="./assets/bondOrShare.jpg" alt=""></div>
+    </div>
+    <div class="pair" id="s7pair">
+      <span class="word c-lime rv" id="bondsWord">Bonds</span>
+      <span class="word c-pink rv" id="sharesWord">Shares</span>
+    </div>
+  </section>
+
+  <section class="scene" id="s8" style="--mh:38vh">
+    <div class="stack" id="s8stack">
+      <div class="titlerow">
+        <div class="tslot" id="bondsTitleSlot"></div>
+        <div class="tslot" id="promiseTitleSlot"></div>
+      </div>
+      <p class="sentence" id="s8sentence"></p>
+      <div class="media" id="s8mediaBox">
+        <div class="slot rv" id="s8media" data-kind="media"><img src="./assets/promise.jpg" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="s9" style="--mh:38vh">
+    <h1 class="title">Shares</h1>
+    <div class="lines" id="s9lines">
+      <span class="ln rv"        id="s9l0">Shares are simple</span>
+      <span class="ln c-lime rv" id="s9l1">they can go up</span>
+      <span class="ln c-pink rv" id="s9l2">they can go down</span>
+    </div>
+    <div class="media" id="s9mediaBox">
+      <div class="slot rv" id="s9happy" data-kind="media"><img src="./assets/happy.jpg" alt=""></div>
+      <div class="slot rv" id="s9sad"   data-kind="media"><img src="./assets/sad.jpg"   alt=""></div>
+      <div class="slot rv" id="s9zoom"  data-kind="media">
+        <div class="zshadow" id="zshadow"></div>
+        <div class="zclip" id="zclip">
+          <div class="nest" id="nest">
+            <img class="pat" src="./assets/patience.jpg" alt="">
+            <img class="gra" id="graImg" src="./assets/graph.jpg" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="final rv" id="s9final">have patience and don't get too excited</span>
+  </section>
+
+</div>
+
+<div id="pre"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script>window.gsap||document.write('<scr'+'ipt src="./assets/gsap.min.js"><\/scr'+'ipt>');</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+<script>window.Flip||document.write('<scr'+'ipt src="./assets/Flip.min.js"><\/scr'+'ipt>');</script>
+
+<script>
+/* ===========================================================================
+   MEASURED CONSTANTS — Zoom Moment C
+   graph.jpg was located inside patience.jpg with a multi-scale, downscaled
+   normalised-cross-correlation sweep (Pillow + numpy) over every scale from
+   40px to full width, then refined. Peak NCC 0.821; the best unrelated
+   candidate family scored 0.51 — so the match is unambiguous: graph.jpg is
+   the lower ECG trace on the patient monitor in patience.jpg.
+   Nudge these four numbers by hand if the alignment is a pixel or two off.
+   ======================================================================== */
+const PATIENCE          = { w: 735, h: 490 };
+const GRAPH_IN_PATIENCE = { x: 547, y: 122, w: 82, h: 51 };
+
+/* ---- one place to tune the whole deck ---------------------------------- */
+const D = { slide:0.9, reveal:0.5, media:0.62, zoomA:1.1, zoomB:1.2, zoomC:1.6 };
+const EASE = { slide:'power3.inOut', reveal:'back.out(1.4)', zoom:'power3.inOut' };
+
+const SENTENCE = "buying bond means lending some money to company on the promise of a fixed interest in some period of time and on maturity you get your base money back";
+
+const $ = id => document.getElementById(id);
+const stage = $('stage');
+
+/* ---- build the scene-8 sentence: one <span> per word ------------------- */
+const sentEl = $('s8sentence');
+const sentWords = [];
+let promiseWord = null, promiseAnchor = null;
+SENTENCE.split(' ').forEach((w, i) => {
+  if (i) sentEl.appendChild(document.createTextNode(' '));
+  const s = document.createElement('span');
+  s.className = 'w';
+  s.textContent = w;
+  if (w === 'promise'){ s.classList.add('key'); s.id = 'promiseWord'; promiseWord = s; }
+  else sentWords.push(s);
+  sentEl.appendChild(s);
+});
+promiseAnchor = promiseWord.nextSibling;      // the text node right after it
+
+const bondsWord  = $('bondsWord');
+const sharesWord = $('sharesWord');
+const riskVid    = $('riskVid');
+const nest       = $('nest');
+const zclip      = $('zclip');
+const graImg     = $('graImg');
+const zshadow    = $('zshadow');
+const s8mediaBox = $('s8mediaBox');
+const s8stack    = $('s8stack');
+const s9mediaBox = $('s9mediaBox');
+const s9lines    = [$('s9l0'), $('s9l1'), $('s9l2')];
+
+const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
+const RV = [...document.querySelectorAll('.rv')];
+RV.forEach((el, i) => el.dataset.rot = (i % 2 ? 1.8 : -1.8));
+const FLAT = new Set(['s9happy','s9sad','s9zoom']);   // crossfade in place, no drift
+
+/* ===========================================================================
+   THE BEAT LIST — 1:1 with the storyboard. Index 0 is the opening state.
+   ======================================================================== */
+const SEQ = [
+  { t:'init',  scene:'s1' },                       //  0  S1 title
+  { t:'show',  el:'s1media' },                     //  1  thinking-emoji.gif
+  { t:'slide', scene:'s2', dir:'right' },          //  2
+  { t:'show',  el:'s2w0' },                        //  3  time
+  { t:'show',  el:'s2w1' },                        //  4  money
+  { t:'show',  el:'s2w2' },                        //  5  energy
+  { t:'slide', scene:'s3', dir:'right' },          //  6
+  { t:'show',  el:'s3w0' },                        //  7  health
+  { t:'show',  el:'s3w1' },                        //  8  relationships
+  { t:'show',  el:'s3w2' },                        //  9  education
+  { t:'slide', scene:'s4', dir:'bottom' },         // 10
+  { t:'show',  el:'s4media' },                     // 11  kidSchool.png
+  { t:'slide', scene:'s5', dir:'right' },          // 12
+  { t:'show',  el:'s5media' },                     // 13  buying.jpg
+  { t:'slide', scene:'s6', dir:'bottom' },         // 14
+  { t:'show',  el:'s6media' },                     // 15  risk.mp4
+  { t:'slide', scene:'s7', dir:'right' },          // 16
+  { t:'show',  el:'s7media' },                     // 17  bondOrShare.jpg
+  { t:'show',  el:'bondsWord' },                   // 18  Bonds
+  { t:'show',  el:'sharesWord' },                  // 19  Shares
+  { t:'zoomA' },                                   // 20  ZOOM A  -> scene 8
+  { t:'sentence' },                                // 21  the bond sentence
+  { t:'zoomB' },                                   // 22  ZOOM B  -> isolate "promise"
+  { t:'show',  el:'s8media' },                     // 23  promise.jpg
+  { t:'slide', scene:'s9', dir:'bottom' },         // 24
+  { t:'show',  el:'s9l0' },                        // 25  Shares are simple
+  { t:'show',  el:'s9l1' },                        // 26  they can go up
+  { t:'show',  el:'s9happy' },                     // 27  happy.jpg
+  { t:'show',  el:'s9l2' },                        // 28  they can go down
+  { t:'swap',  from:'s9happy', to:'s9sad' },       // 29  sad.jpg
+  { t:'graph' },                                   // 30  graph.jpg (already nested)
+  { t:'zoomC' },                                   // 31  ZOOM C  -> patience.jpg
+  { t:'show',  el:'s9final' }                      // 32  closing line
+];
+const LAST = SEQ.length - 1;
+
+/* ---- state is always derived from the beat list, never mutated in place - */
+function stateAt(i){
+  const st = { scene:'s1', vis:{}, flat:{}, zoomA:false, zoomB:false, graph:false, zoomC:false };
+  for (let k = 0; k <= i; k++){
+    const b = SEQ[k];
+    switch (b.t){
+      case 'init':
+      case 'slide':    st.scene = b.scene; break;
+      case 'show':     st.vis[b.el] = 1; delete st.flat[b.el]; break;
+      case 'swap':     delete st.vis[b.from]; st.flat[b.from] = 1;
+                       st.vis[b.to] = 1; delete st.flat[b.to]; break;
+      case 'zoomA':    st.scene = 's8'; st.zoomA = true; break;
+      case 'sentence': st.vis.s8sentence = 1; break;
+      case 'zoomB':    st.zoomB = true; delete st.vis.bondsWord; break;
+      case 'graph':    delete st.vis.s9sad; st.flat.s9sad = 1;
+                       st.vis.s9zoom = 1; st.graph = true; break;
+      case 'zoomC':    st.zoomC = true; break;
+    }
+  }
+  return st;
+}
+
+/* ===========================================================================
+   LAYOUT — every geometry-dependent number is recomputed here (init + resize)
+   ======================================================================== */
+let S8SHIFT = 0, S8STACK = 0, S9SHIFT = 0, S9K = 1, ZC = null;
+
+function measure(){
+  /* --- scene 7's two words: lay out as a flex row, then pin absolutely, so
+         Flip can lift "Bonds" out without "Shares" reflowing --------------- */
+  const pair = $('s7pair');
+  pair.style.height = '';
+  pair.style.display = 'flex';
+  pair.style.justifyContent = 'center';
+  pair.style.gap = 'clamp(30px,7vw,140px)';
+  [bondsWord, sharesWord].forEach(el => { el.style.position=''; el.style.left=''; el.style.top=''; });
+  const pr = pair.getBoundingClientRect();
+  const pm = [bondsWord, sharesWord].map(el => {
+    const r = el.getBoundingClientRect(); return { el, l:r.left-pr.left, t:r.top-pr.top };
+  });
+  const ph = pair.offsetHeight;
+  pair.style.display = 'block';
+  pm.forEach(m => { m.el._l = m.l; m.el._t = m.t;
+    m.el.style.position='absolute'; m.el.style.left=m.l+'px'; m.el.style.top=m.t+'px'; });
+  pair.style.height = ph + 'px';
+
+  /* --- scene 8's sentence: same trick, so lifting "promise" out is a no-op
+         for every other word ------------------------------------------------ */
+  const all = [...sentWords, promiseWord];
+  all.forEach(el => { el.style.position=''; el.style.left=''; el.style.top=''; });
+  sentEl.style.height = '';
+  const cr = sentEl.getBoundingClientRect();
+  const sm = all.map(el => { const r = el.getBoundingClientRect();
+                             return { el, l:r.left-cr.left, t:r.top-cr.top }; });
+  const sh = sentEl.offsetHeight;
+  sm.forEach(o => { o.el._l = o.l; o.el._t = o.t;
+    o.el.style.position='absolute'; o.el.style.left=o.l+'px'; o.el.style.top=o.t+'px'; });
+  sentEl.style.height = sh + 'px';
+
+  /* --- zoom-B drift vectors: each word leaves radially away from "promise" */
+  const pc = promiseWord.getBoundingClientRect();
+  const cx = pc.left + pc.width/2, cy = pc.top + pc.height/2;
+  sentWords.forEach(w => {
+    const r = w.getBoundingClientRect();
+    const dx = (r.left + r.width/2) - cx, dy = (r.top + r.height/2) - cy;
+    const len = Math.hypot(dx, dy) || 1;
+    w._dx = dx/len * 46; w._dy = dy/len * 34;
+  });
+
+  /* --- scene 8: once the sentence is gone the block must re-centre, so the
+         image rises by the sentence's full height while the whole stack
+         drifts down by half of it — title down a half, image up a half. --- */
+  const g8 = parseFloat(getComputedStyle(s8stack).rowGap) || 24;
+  S8SHIFT = -(sh + g8);
+  S8STACK = -S8SHIFT / 2;
+
+  /* --- scene 9: how much the image may grow into the space the three lines
+         free up. Bottom edge stays put; only the top expands upward. ------- */
+  const g9 = parseFloat(getComputedStyle($('s9')).rowGap) || 24;
+  const freed = $('s9lines').offsetHeight + g9;
+  const mh = s9mediaBox.clientHeight, mw = s9mediaBox.clientWidth;
+  const widest = Math.min(mw, mh * (PATIENCE.w / PATIENCE.h));   // patience is widest
+  S9K = Math.min(1 + freed/mh, (innerWidth * 0.88) / widest, 1.5);
+  S9SHIFT = -(S9K - 1) * mh / 2;
+
+  computeZoomC();
+}
+
+function computeZoomC(){
+  const W = s9mediaBox.clientWidth, H = s9mediaBox.clientHeight;
+  const pAR = PATIENCE.w / PATIENCE.h;
+  const gAR = GRAPH_IN_PATIENCE.w / GRAPH_IN_PATIENCE.h;
+
+  const Pw = Math.min(W, H * pAR), Ph = Pw / pAR;   // patience contained in the slot
+  const Gw = Math.min(W, H * gAR), Gh = Gw / gAR;   // graph    contained in the slot
+  const nestL = (W - Pw)/2, nestT = (H - Ph)/2;
+  const graL  = (W - Gw)/2, graT  = (H - Gh)/2;
+
+  // where graph.jpg sits inside the nest, in nest-local pixels
+  const subL = Pw * GRAPH_IN_PATIENCE.x / PATIENCE.w;
+  const subT = Ph * GRAPH_IN_PATIENCE.y / PATIENCE.h;
+  const subW = Pw * GRAPH_IN_PATIENCE.w / PATIENCE.w;
+  const subH = Ph * GRAPH_IN_PATIENCE.h / PATIENCE.h;
+
+  nest.style.width  = Pw + 'px';
+  nest.style.height = Ph + 'px';
+  graImg.style.left      = (GRAPH_IN_PATIENCE.x / PATIENCE.w * 100) + '%';
+  graImg.style.top       = (GRAPH_IN_PATIENCE.y / PATIENCE.h * 100) + '%';
+  graImg.style.width     = (GRAPH_IN_PATIENCE.w / PATIENCE.w * 100) + '%';
+  graImg.style.height    = (GRAPH_IN_PATIENCE.h / PATIENCE.h * 100) + '%';
+  graImg.style.objectFit = 'fill';   // the two aspects agree to 0.5%: exact registration
+
+  zshadow.style.width      = Pw + 'px';
+  zshadow.style.height     = Ph + 'px';
+  zshadow.style.marginLeft = (-Pw/2) + 'px';
+  zshadow.style.marginTop  = (-Ph/2) + 'px';
+
+  ZC = {
+    W, H, Pw, Ph, Gw, Gh, nestL, nestT, graL, graT,
+    subCx: subL + subW/2, subCy: subT + subH/2,
+    s0: Gw / subW,                                        // ~9x at the start
+    c0x: W/2, c0y: H/2,                                   // focal point at p=0
+    c1x: nestL + subL + subW/2, c1y: nestT + subT + subH/2 // focal point at p=1
+  };
+}
+
+/* p = 0 -> graph.jpg fills the slot; p = 1 -> patience.jpg fits the slot.
+   Scale is interpolated exponentially so the pull-back reads at a constant
+   rate. The clip box is the one sanctioned non-transform property. */
+function setNest(p){
+  const z = ZC; if (!z) return;
+  const s  = z.s0 * Math.pow(1 / z.s0, p);
+  const cx = z.c0x + (z.c1x - z.c0x) * p;
+  const cy = z.c0y + (z.c1y - z.c0y) * p;
+  nest.style.transform =
+    `translate3d(${cx - s*z.subCx}px,${cy - s*z.subCy}px,0) scale(${s})`;
+
+  const l = z.graL + (z.nestL - z.graL) * p, t = z.graT + (z.nestT - z.graT) * p;
+  const w = z.Gw   + (z.Pw    - z.Gw)   * p, h = z.Gh   + (z.Ph    - z.Gh)   * p;
+  zclip.style.clipPath = `inset(${t}px ${z.W-l-w}px ${z.H-t-h}px ${l}px round 18px)`;
+  zshadow.style.transform = `scale(${w/z.Pw},${h/z.Ph})`;
+
+  // crossfade graph.jpg away mid-move so any crop mismatch is hidden by motion
+  graImg.style.opacity = String(1 - Math.min(1, Math.max(0, (p - 0.28) / 0.42)));
+}
+
+/* ===========================================================================
+   RENDER — the single source of truth. Every beat ends by calling it, so the
+   deck can never drift out of a canonical state.
+   ======================================================================== */
+const hiddenText  = el => ({ opacity:0, x:0, y:26, scale:.98, rotate:(+el.dataset.rot||0) });
+const hiddenMedia = ()  => ({ opacity:0, x:0, y:30, scale:.94, rotate:0 });
+const flat        = ()  => ({ opacity:0, x:0, y:0,  scale:1,   rotate:0 });
+const shown       = ()  => ({ opacity:1, x:0, y:0,  scale:1,   rotate:0 });
+
+function hiddenFor(el, st){
+  if (el === bondsWord && st.zoomB) return { opacity:0, x:0, y:0, scale:1.08, rotate:0 };
+  if (st.flat[el.id] || FLAT.has(el.id)) return flat();
+  if (st.graph && s9lines.includes(el)) return { opacity:0, x:0, y:-14, scale:1, rotate:0 };
+  return el.dataset.kind === 'media' ? hiddenMedia() : hiddenText(el);
+}
+
+function homeBonds(){
+  if (bondsWord.parentNode !== $('s7pair')) $('s7pair').appendChild(bondsWord);
+  bondsWord.classList.remove('as-title');
+  bondsWord.style.position = 'absolute';
+  bondsWord.style.left = bondsWord._l + 'px';
+  bondsWord.style.top  = bondsWord._t + 'px';
+}
+function titleBonds(){
+  if (bondsWord.parentNode !== $('bondsTitleSlot')) $('bondsTitleSlot').appendChild(bondsWord);
+  bondsWord.classList.add('as-title');
+  bondsWord.style.position = 'static';
+  bondsWord.style.left = ''; bondsWord.style.top = '';
+}
+function homePromise(){
+  if (promiseWord.parentNode !== sentEl) sentEl.insertBefore(promiseWord, promiseAnchor);
+  promiseWord.classList.remove('as-title');
+  promiseWord.style.position = 'absolute';
+  promiseWord.style.left = promiseWord._l + 'px';
+  promiseWord.style.top  = promiseWord._t + 'px';
+}
+function titlePromise(){
+  if (promiseWord.parentNode !== $('promiseTitleSlot')) $('promiseTitleSlot').appendChild(promiseWord);
+  promiseWord.classList.add('as-title');
+  promiseWord.style.position = 'static';
+  promiseWord.style.left = ''; promiseWord.style.top = '';
+}
+
+function render(st){
+  st.zoomA ? titleBonds()   : homeBonds();
+  st.zoomB ? titlePromise() : homePromise();
+
+  SCENES.forEach(id => {
+    const el = $(id);
+    gsap.set(el, { xPercent:0, yPercent:0, opacity:1, scale:1 });
+    el.style.visibility = (id === st.scene) ? 'visible' : 'hidden';
+  });
+
+  RV.forEach(el => gsap.set(el, st.vis[el.id] ? shown() : hiddenFor(el, st)));
+
+  // scene 7's non-travelling pieces (zoom A pushes them back)
+  gsap.set([$('s7title'), $('s7mediaBox')], { opacity:1, scale:1, y:0 });
+
+  // scene 8's sentence
+  const sentOn = !!st.vis.s8sentence;
+  sentWords.forEach(w => {
+    if (st.zoomB)    gsap.set(w, { opacity:0, x:w._dx, y:w._dy, scale:1 });
+    else if (sentOn) gsap.set(w, { opacity:1, x:0, y:0, scale:1 });
+    else             gsap.set(w, { opacity:0, x:0, y:18, scale:1 });
+  });
+  gsap.set(promiseWord, (sentOn || st.zoomB)
+    ? { opacity:1, x:0, y:0, scale:1 } : { opacity:0, x:0, y:18, scale:1 });
+  gsap.set(s8mediaBox, { x:0, y: st.zoomB ? S8SHIFT : 0, scale:1 });
+  gsap.set(s8stack,    { x:0, y: st.zoomB ? S8STACK : 0, scale:1 });
+
+  // scene 9
+  gsap.set(s9mediaBox, { x:0, y: st.graph ? S9SHIFT : 0, scale: st.graph ? S9K : 1 });
+  setNest(st.zoomC ? 1 : 0);
+
+  if (st.scene === 's6' && st.vis.s6media) riskVid.play().catch(()=>{});
+  else riskVid.pause();
+}
+
+/* ===========================================================================
+   BEAT TIMELINES — one per storyboard line, each buildable in both directions
+   ======================================================================== */
+function showTL(el, stBefore){
+  return gsap.timeline().fromTo(el, hiddenFor(el, stBefore), { ...shown(),
+    duration: el.dataset.kind === 'media' ? D.media : D.reveal, ease:EASE.reveal });
+}
+function hideTL(el, stAfter){
+  return gsap.timeline().to(el, { ...hiddenFor(el, stAfter),
+    duration: (el.dataset.kind === 'media' ? D.media : D.reveal) * 0.8, ease:'power2.inOut' });
+}
+
+/* dir = where the INCOMING scene comes from, going forward. Back reverses it. */
+function slideTL(fromScene, toScene, dir, back){
+  const d = back ? { right:'left', left:'right', bottom:'top', top:'bottom' }[dir] : dir;
+  const inFrom = { right:{xPercent:100},  left:{xPercent:-100}, bottom:{yPercent:100},  top:{yPercent:-100} }[d];
+  const outTo  = { right:{xPercent:-100}, left:{xPercent:100},  bottom:{yPercent:-100}, top:{yPercent:100}  }[d];
+  const a = $(fromScene), b = $(toScene);
+  b.style.visibility = 'visible';
+  gsap.set(b, { xPercent:0, yPercent:0, ...inFrom });
+  gsap.set(a, { xPercent:0, yPercent:0 });
+  return gsap.timeline()
+    .to(a, { xPercent:0, yPercent:0, ...outTo, duration:D.slide, ease:EASE.slide }, 0)
+    .to(b, { xPercent:0, yPercent:0,           duration:D.slide, ease:EASE.slide }, 0);
+}
+
+/* ---- ZOOM A: the word "Bonds" becomes the scene-8 title ----------------
+   Flip with scale:true is transform-only, and it lays the element out at its
+   FINAL (large) size then scales it down — so the glyphs are rendered at the
+   big size for the whole flight and land perfectly sharp.                  */
+function zoomA(back){
+  const tl = gsap.timeline();
+  const others = [$('s7title'), $('s7mediaBox'), sharesWord];
+
+  if (!back){
+    $('s8').style.visibility = 'visible';       // scene 8 is already in place beneath
+    gsap.set($('s8'), { xPercent:0, yPercent:0 });
+    const state = Flip.getState(bondsWord);
+    titleBonds();
+    tl.add(Flip.from(state, { duration:D.zoomA, ease:EASE.zoom, scale:true }), 0);
+    tl.to(others, { opacity:0, scale:.96, y:12, duration:D.zoomA*.72, ease:'power2.inOut' }, 0);
+  } else {
+    $('s7').style.visibility = 'visible';
+    gsap.set($('s7'), { xPercent:0, yPercent:0 });
+    gsap.set(others, { opacity:0, scale:.96, y:12 });
+    const state = Flip.getState(bondsWord);
+    homeBonds();
+    tl.add(Flip.from(state, { duration:D.zoomA, ease:EASE.zoom, scale:true }), 0);
+    tl.to(others, { opacity:1, scale:1, y:0, duration:D.zoomA*.72, ease:'power2.inOut' }, D.zoomA*.28);
+  }
+  return tl;
+}
+
+/* ---- the sentence: one beat, revealed with a fast word stagger ---------- */
+function sentenceTL(back){
+  const all = [...sentWords, promiseWord];
+  return back
+    ? gsap.timeline().to(all, { opacity:0, x:0, y:18, duration:.34, ease:'power2.in',
+        stagger:{ each:.008, from:'end' } })
+    : gsap.timeline().fromTo(all, { opacity:0, x:0, y:18 },
+        { opacity:1, x:0, y:0, duration:.42, ease:'back.out(1.6)', stagger:.012 });
+}
+
+/* ---- ZOOM B: the camera pushes into the word "promise" ------------------
+   The other words leave under cover of the zoom and are gone by 60% of it;
+   reversed, they come back during the last 60% of the move.                */
+function zoomB(back){
+  const tl = gsap.timeline();
+  const fade = D.zoomB * 0.6;
+
+  if (!back){
+    const state = Flip.getState(promiseWord);
+    titlePromise();
+    tl.add(Flip.from(state, { duration:D.zoomB, ease:EASE.zoom, scale:true }), 0);
+    sentWords.forEach(w => tl.to(w,
+      { opacity:0, x:w._dx, y:w._dy, duration:fade, ease:'power2.in' }, 0));
+    tl.to(bondsWord, { opacity:0, y:0, scale:1.08, duration:fade, ease:'power2.in' }, 0);
+    tl.to(s8mediaBox, { y:S8SHIFT, duration:D.zoomB, ease:EASE.zoom }, 0);
+    tl.to(s8stack,    { y:S8STACK, duration:D.zoomB, ease:EASE.zoom }, 0);
+  } else {
+    const state = Flip.getState(promiseWord);
+    homePromise();
+    tl.add(Flip.from(state, { duration:D.zoomB, ease:EASE.zoom, scale:true }), 0);
+    sentWords.forEach(w => tl.fromTo(w, { opacity:0, x:w._dx, y:w._dy },
+      { opacity:1, x:0, y:0, duration:fade, ease:'power2.out' }, D.zoomB - fade));
+    tl.fromTo(bondsWord, { opacity:0, y:0, scale:1.08 },
+      { opacity:1, y:0, scale:1, duration:fade, ease:'power2.out' }, D.zoomB - fade);
+    tl.to(s8mediaBox, { y:0, duration:D.zoomB, ease:EASE.zoom }, 0);
+    tl.to(s8stack,    { y:0, duration:D.zoomB, ease:EASE.zoom }, 0);
+  }
+  return tl;
+}
+
+/* ---- the graph beat: crossfade into the nested image, and make room ----- */
+function graphTL(back){
+  const tl = gsap.timeline();
+  const zoom = $('s9zoom'), sad = $('s9sad');
+  setNest(0);
+  if (!back){
+    tl.to(s9lines, { opacity:0, y:-14, duration:.44, ease:'power2.in', stagger:.05 }, 0);
+    tl.to(sad, { opacity:0, duration:.5, ease:'power2.inOut' }, .08);
+    tl.fromTo(zoom, { opacity:0, x:0, y:0, scale:1 }, { opacity:1, duration:.6, ease:'power2.inOut' }, .22);
+    tl.to(s9mediaBox, { y:S9SHIFT, scale:S9K, duration:.85, ease:EASE.zoom }, .1);
+  } else {
+    tl.to(zoom, { opacity:0, duration:.5, ease:'power2.inOut' }, 0);
+    tl.fromTo(sad, { opacity:0 }, { opacity:1, duration:.55, ease:'power2.inOut' }, .18);
+    tl.to(s9mediaBox, { y:0, scale:1, duration:.85, ease:EASE.zoom }, 0);
+    tl.fromTo(s9lines, { opacity:0, y:-14 },
+      { opacity:1, y:0, duration:.5, ease:EASE.reveal, stagger:.05 }, .3);
+  }
+  return tl;
+}
+
+/* ---- ZOOM C: graph.jpg pulls back to reveal it was part of patience.jpg - */
+function zoomC(back){
+  const o = { p: back ? 1 : 0 };
+  return gsap.timeline().to(o, { p: back ? 0 : 1, duration:D.zoomC, ease:'power2.inOut',
+    onUpdate(){ setNest(o.p); } });
+}
+
+/* ===========================================================================
+   CONTROLLER
+   ======================================================================== */
+let index = 0, busy = false, queued = 0, ready = false, activeTL = null;
+
+function buildTL(from, to){
+  const fwd = to > from;
+  const b   = SEQ[fwd ? to : from];
+  switch (b.t){
+    case 'show':
+      return fwd ? showTL($(b.el), stateAt(from)) : hideTL($(b.el), stateAt(to));
+    case 'swap': {
+      const out = $(fwd ? b.from : b.to), inn = $(fwd ? b.to : b.from);
+      return gsap.timeline()
+        .to(out, { opacity:0, x:0, y:0, scale:1, duration:.45, ease:'power2.inOut' }, 0)
+        .fromTo(inn, { opacity:0, x:0, y:0, scale:1.02 },
+                     { opacity:1, scale:1, duration:.6, ease:'power2.inOut' }, .12);
+    }
+    case 'slide': {
+      const prev = stateAt((fwd ? to : from) - 1).scene;
+      return fwd ? slideTL(prev, b.scene, b.dir, false)
+                 : slideTL(b.scene, prev, b.dir, true);
+    }
+    case 'zoomA':    return zoomA(!fwd);
+    case 'sentence': return sentenceTL(!fwd);
+    case 'zoomB':    return zoomB(!fwd);
+    case 'graph':    return graphTL(!fwd);
+    case 'zoomC':    return zoomC(!fwd);
+  }
+  return gsap.timeline();
+}
+
+function go(dir){
+  if (!ready) return;
+  if (busy){ queued = dir; return; }            // queue at most one press
+  const target = index + dir;
+  if (target < 0 || target > LAST){ settle(dir); return; }
+
+  busy = true;
+  const from = index;
+  index = target;
+
+  // entering the video beat always restarts it from 0
+  if (dir > 0 && SEQ[target].el === 's6media'){ riskVid.currentTime = 0; riskVid.play().catch(()=>{}); }
+
+  activeTL = buildTL(from, target);
+  activeTL.eventCallback('onComplete', () => {
+    activeTL = null;
+    render(stateAt(index));
+    busy = false;
+    if (queued){ const q = queued; queued = 0; go(q); }
+  });
+}
+
+/* a tiny silent settle at either end of the deck */
+function settle(dirSign){
+  busy = true;
+  const sc = $(stateAt(index).scene);
+  activeTL = gsap.timeline({ onComplete(){ activeTL = null; busy = false; queued = 0; } })
+    .to(sc, { xPercent: dirSign * 1.1, duration:.16, ease:'power2.out' })
+    .to(sc, { xPercent: 0, duration:.45, ease:'elastic.out(1,.5)' });
+}
+
+function restart(){
+  if (!ready) return;
+  if (activeTL){ activeTL.kill(); activeTL = null; }
+  busy = true; queued = 0;
+  activeTL = gsap.timeline({ onComplete(){ activeTL = null; busy = false; } })
+    .to(stage, { opacity:0, duration:.22, ease:'power2.in' })
+    .add(() => { index = 0; render(stateAt(0)); })
+    .to(stage, { opacity:1, duration:.34, ease:'power2.out' });
+}
+
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Spacebar' || e.key === 'Enter'){
+    e.preventDefault(); go(1);
+  } else if (e.key === 'ArrowLeft'){
+    e.preventDefault(); go(-1);
+  } else if (e.key === 'Home'){
+    e.preventDefault(); restart();
+  }
+});
+addEventListener('click', () => go(1));
+
+/* ---- hide the cursor after 2s idle, restore on move -------------------- */
+let curT;
+function pokeCursor(){
+  document.body.classList.remove('nocursor');
+  clearTimeout(curT);
+  curT = setTimeout(() => document.body.classList.add('nocursor'), 2000);
+}
+addEventListener('mousemove', pokeCursor);
+
+/* ---- resize: re-measure, then snap to the current beat, never animate --- */
+let rzT;
+addEventListener('resize', () => {
+  clearTimeout(rzT);
+  rzT = setTimeout(() => {
+    if (!ready) return;
+    if (activeTL){ activeTL.kill(); activeTL = null; }
+    busy = false; queued = 0;
+    remeasure();
+    render(stateAt(index));
+  }, 120);
+});
+
+function remeasure(){
+  // measure with the deck flattened, so no live transform can skew a rect
+  SCENES.forEach(id => { $(id).style.visibility = 'visible';
+    gsap.set($(id), { xPercent:0, yPercent:0, opacity:1, scale:1 }); });
+  RV.forEach(el => gsap.set(el, { opacity:0, x:0, y:0, scale:1, rotate:0 }));
+  gsap.set([...sentWords, promiseWord], { opacity:0, x:0, y:0, scale:1 });
+  gsap.set([s8stack, s8mediaBox, s9mediaBox], { x:0, y:0, scale:1 });
+  if (bondsWord.parentNode !== $('s7pair')){ $('s7pair').appendChild(bondsWord); bondsWord.classList.remove('as-title'); }
+  if (promiseWord.parentNode !== sentEl){ sentEl.insertBefore(promiseWord, promiseAnchor); promiseWord.classList.remove('as-title'); }
+  measure();
+}
+
+/* ===========================================================================
+   PRELOAD — nothing renders until every pixel and glyph is in hand
+   ======================================================================== */
+function preload(){
+  const jobs = [...document.querySelectorAll('img')].map(im =>
+    im.decode ? im.decode().catch(()=>{}) : new Promise(r => { im.onload = im.onerror = r; }));
+  jobs.push(new Promise(r => {
+    if (riskVid.readyState >= 3) return r();
+    riskVid.addEventListener('canplaythrough', r, { once:true });
+    riskVid.addEventListener('error', r, { once:true });
+    riskVid.load();
+  }));
+  jobs.push(document.fonts ? document.fonts.ready : Promise.resolve());
+  return Promise.race([ Promise.all(jobs), new Promise(r => setTimeout(r, 9000)) ]);
+}
+
+function boot(){
+  gsap.registerPlugin(Flip);
+  gsap.config({ force3D:true });
+  gsap.defaults({ overwrite:'auto' });
+  preload().then(() => {
+    remeasure();
+    render(stateAt(0));
+    ready = true;
+    pokeCursor();
+    gsap.to($('pre'), { opacity:0, duration:.5, ease:'power2.out',
+      onComplete(){ $('pre').remove(); } });
+  });
+}
+
+addEventListener('load', boot);
+window.__deck = { go:d=>go(d), at:()=>index, last:()=>LAST, isBusy:()=>busy, restart };
+</script>

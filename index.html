@@ -4,7 +4,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 
 <style>
 /* ============================================================================
@@ -185,6 +185,225 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
   animation:breathe 2.4s ease-in-out infinite;
 }
 @keyframes breathe{0%,100%{transform:scale(.86);opacity:.45}50%{transform:scale(1.06);opacity:.95}}
+
+/* ============================================================================
+   ACT TWO / ACT THREE PALETTE — additive. Nothing above this line changes.
+
+   What the new images actually are:
+     running / bondsOrShares  sunny field: pale blue sky, dry olive grass,
+                              warm skin. Nothing dark in them at all.
+     pond / pushed / dump     anime: saturated CYAN-TEAL water, hard green
+                              foliage, warm tan rock, flat blue sky
+     office.jpg               cream newsprint and manila stacked to the
+                              ceiling, warm wood, one blue-grey shirt, and a
+                              cold blue-grey window blind behind
+     ancient.jpg              a warm beige wall and a dark green shirt lit
+                              only by the white glare of an old monitor
+     imagine.jpg              near-white high-key studio, cool grey shirt —
+                              by far the brightest thing in the deck
+     call.png                 warm skin on a hazy grey-green field
+     sharebond.png            warm wood and rug, warm lamp, cold blue blind
+
+   So the new set trades act one's violet/pink/lime for two things that keep
+   recurring: the CYAN of the pond, and the CREAM-MANILA of stacked paper.
+   Act one's plum-black would fight both — plum under cyan goes muddy, and it
+   makes the manila look dirty rather than bureaucratic.
+
+   Act two therefore sits on the same darkness but rotated cold: a deep
+   SLATE-TEAL-BLACK. It reads as the same night as act one, but it puts the
+   paper scenes in temperature contrast (warm cream on cold ground, which is
+   exactly the feeling of the story) and it lets the anime cyan sit naturally
+   instead of clashing.
+
+     --bg2      #0d1418  slate-teal black — act two ground (the problem)
+     --a2-cyan  #5fe3d0  the pond water. This is "the magic", and it is spent
+                         on scene 14 and the spreadsheet target cell only
+     --a2-paper #e8d9b8  manila + newsprint. The problem colour: every file,
+                         filename, label and XL sheet in the act is this
+     --a2-alarm #ff5a4d  the red binder in dump.png / the red book on the
+                         desk. Used exactly once, for the wrong cell
+
+   Act three lifts the same family one step toward dawn rather than switching
+   design: a cleaner, bluer ground and a brighter sibling of the pond cyan.
+   The solution is the pond's colour, so the platform inherits it.
+
+     --bg3      #0f1e26  lifted, cleaner ground (the solution)
+     --a3-aqua  #6feede  the platform, and the finale
+
+   Deliberately NOT done: no all-caps eyebrows, no tracked-out labels above
+   content, no chip/pill backgrounds, no second acid accent, and no warm gold
+   in the finale — amber is act one's close and stays there. The finale earns
+   its confidence from scale and a single colour, not from decoration.
+   ========================================================================= */
+:root{
+  --bg2:#0d1418;
+  --bg3:#0f1e26;
+  --a2-cyan:#5fe3d0;
+  --a2-paper:#e8d9b8;
+  --a2-alarm:#ff5a4d;
+  --a3-aqua:#6feede;
+
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --title-xl:clamp(38px,5.4vw,96px);
+  --voice:clamp(15px,1.5vw,27px);
+  --say:clamp(19px,2.1vw,38px);
+  --file:clamp(12px,1.15vw,21px);
+  --lbl:clamp(12px,1.15vw,21px);
+}
+
+.scene.act2{
+  background:
+    radial-gradient(70vw 60vh at 20% 8%,  rgba(95,227,208,.10),  transparent 60%),
+    radial-gradient(62vw 55vh at 84% 90%, rgba(232,217,184,.055),transparent 62%),
+    var(--bg2);
+}
+.scene.act3{
+  background:
+    radial-gradient(74vw 62vh at 50% 4%,  rgba(111,238,222,.17), transparent 62%),
+    radial-gradient(58vw 50vh at 12% 94%, rgba(111,238,222,.07), transparent 60%),
+    var(--bg3);
+}
+.c-cyan{color:var(--a2-cyan)}
+.c-paper{color:var(--a2-paper)}
+.c-aqua{color:var(--a3-aqua)}
+
+/* a plain sub-line under a title — the act's workhorse text element */
+.a2line{
+  font-family:var(--display);font-weight:700;
+  font-size:var(--line);line-height:1.26;letter-spacing:-.015em;
+  text-align:center;text-wrap:balance;max-width:min(86vw,34ch);
+  will-change:transform,opacity;
+}
+.a2line.sm{font-size:var(--voice);font-weight:500;font-family:var(--body)}
+
+/* ---- the blackout used for the act-one -> act-two cut ------------------- */
+#cut{position:fixed;inset:0;z-index:40;background:#000;opacity:0;pointer-events:none}
+
+/* ---- scene 12: two voices, one per side of the exchange. The row is capped
+       to the picture's own width so each line sits over its speaker rather
+       than out at the screen edge. --------------------------------------- */
+.duo{display:flex;width:min(100%,calc(var(--mh) * 1.7768));gap:5%;align-items:flex-start}
+.duo>*{font-size:var(--voice);line-height:1.35;font-weight:500}
+.duo .lft{flex:1.7 1 0;text-align:left;color:var(--a2-paper)}
+.duo .rgt{flex:1 1 0;text-align:right;color:var(--a2-cyan);font-weight:700}
+
+/* ---- scene 13: the dots --------------------------------------------------*/
+.dots{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--title-xl);line-height:.8;letter-spacing:.04em;
+  color:var(--a2-paper);
+  will-change:transform,opacity;
+}
+
+/* ---- scene 11: the half-image reveal. The box is exactly the picture's own
+       rect, so the clip's rounded corners land on the picture's corners. The
+       shadow is a separate box BEHIND the clip, scaled in lockstep with it —
+       a drop-shadow filter on the parent also works but has to be recomputed
+       every frame, which costs half the frame budget. --------------------- */
+.clipwrap{position:relative;width:min(100%,calc(var(--mh) * var(--far)));aspect-ratio:var(--far)}
+.cshadow{position:absolute;inset:0;border-radius:18px;transform-origin:0 50%;
+  box-shadow:0 26px 48px -6px rgba(0,0,0,.75)}
+.clipbox{position:absolute;inset:0}
+.clipbox>img{width:100%;height:100%;object-fit:cover;border-radius:0}
+
+/* ---- pond frame: the only scene with text over a picture ---------------- */
+.frame{position:relative;width:min(100%,calc(var(--mh) * var(--far)));aspect-ratio:var(--far)}
+.frame>img{width:100%;height:100%;object-fit:cover;border-radius:18px;
+  box-shadow:0 34px 74px -22px rgba(0,0,0,.82),0 0 0 1px rgba(246,239,230,.07)}
+.say{
+  position:absolute;transform-origin:50% 50%;
+  font-family:var(--display);font-weight:800;
+  font-size:var(--say);line-height:1.1;letter-spacing:-.015em;
+  white-space:nowrap;
+  will-change:transform,opacity;
+}
+/* the pond speaks in its own water colour; the guy answers in paper-cream.
+   A soft local shadow only — no chips, no bubbles. */
+.say.pond{color:#eafffb;text-shadow:0 2px 18px rgba(4,26,32,.92),0 1px 3px rgba(4,26,32,.85)}
+.say.guy {color:var(--a2-paper);text-shadow:0 2px 18px rgba(30,18,4,.92),0 1px 3px rgba(20,12,2,.85)}
+
+/* ---- scene 14: the inserted word --------------------------------------- */
+.ins .iw{display:inline-block;white-space:nowrap;will-change:transform,opacity}
+.ins .magic{color:var(--a2-cyan)}
+
+/* ---- scene 15: confetti ------------------------------------------------ */
+#s15canvas{position:absolute;inset:0;pointer-events:none}
+
+/* ---- the generic act-two nest (separate machinery from scene 9) --------- */
+.nshadow{position:absolute;left:50%;top:50%;border-radius:18px;
+  box-shadow:0 34px 74px -22px rgba(0,0,0,.82);transform-origin:50% 50%}
+.nclip{position:absolute;inset:0}
+.nwrap{position:absolute;left:0;top:0;transform-origin:0 0;backface-visibility:hidden;
+  will-change:transform}
+.nwrap>img{position:absolute;left:0;top:0;width:100%;height:100%;border-radius:0;
+  max-width:none;max-height:none;box-shadow:none}
+.nslot{display:block}                         /* overrides .slot flex centring */
+
+/* ---- the spreadsheet: grid lines and blocks only, never a glyph -------- */
+.xlbox{position:absolute;inset:0;overflow:hidden;border-radius:18px;
+  background:#f2eee4;
+  box-shadow:0 34px 74px -22px rgba(0,0,0,.82),0 0 0 1px rgba(246,239,230,.07)}
+.xlcam{position:absolute;left:0;top:0;will-change:transform}
+.xlsheet{
+  position:absolute;left:0;top:0;will-change:transform;
+  background-color:#fbf9f4;
+  background-image:
+    repeating-linear-gradient(to right,  rgba(24,42,48,.17) 0 1px, transparent 1px var(--cw)),
+    repeating-linear-gradient(to bottom, rgba(24,42,48,.17) 0 1px, transparent 1px var(--ch));
+}
+.xlblk{position:absolute;border-radius:1px}
+.xlcell{position:absolute;border-radius:2px;will-change:transform,opacity}
+.xlnbr{position:absolute;border-radius:2px;background:transparent}
+
+/* ---- scene 18: the two literal filenames ------------------------------- */
+.files{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.1vh,14px);width:100%}
+.files .fn{
+  font-family:var(--mono);font-weight:500;font-size:var(--file);
+  letter-spacing:-.01em;text-align:center;word-break:break-word;max-width:92vw;
+  will-change:transform,opacity;
+}
+.files .fn.ok{color:var(--a2-paper)}
+.files .fn.no{color:var(--a2-alarm)}
+
+/* ---- two-up / three-up rows -------------------------------------------- */
+.rowmedia{position:relative;width:100%;height:var(--mh);display:flex;
+  align-items:center;justify-content:center;gap:clamp(18px,3vw,56px)}
+.cell{position:relative;height:100%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;will-change:transform,opacity}
+.cell>img{max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain;
+  border-radius:18px;box-shadow:0 34px 74px -22px rgba(0,0,0,.82),0 0 0 1px rgba(246,239,230,.07)}
+.cell.nslot{display:block;height:100%}
+
+/* ---- the two label rings (scenes 24 and 31) ---------------------------- */
+.ring{position:relative;width:100%;flex:1 1 auto;min-height:0}
+/* left/top are computed in layoutRings() — never a CSS transform, because the
+   hub is an .rv element and render() owns its transform. */
+.ring .hubimg{position:absolute;height:var(--rh);aspect-ratio:var(--har);
+  will-change:transform,opacity}
+.cell.nslot{aspect-ratio:var(--car)}
+.ring .hubword{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  font-family:var(--display);font-weight:800;font-size:var(--title);
+  letter-spacing:-.022em;color:var(--a3-aqua);white-space:nowrap}
+.lbl{
+  position:absolute;
+  font-family:var(--body);font-weight:500;font-size:var(--lbl);
+  line-height:1.28;text-align:center;max-width:18ch;
+  color:var(--a2-paper);
+  will-change:transform,opacity;
+}
+.act3 .lbl{color:#dff3f1}
+#s31arrows{position:absolute;inset:0;overflow:visible;pointer-events:none}
+#s31arrows path{fill:none;stroke:var(--a3-aqua);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;opacity:.72}
+
+/* ---- the finale -------------------------------------------------------- */
+.finale{
+  font-family:var(--display);font-weight:800;
+  font-size:var(--title-xl);line-height:1.0;letter-spacing:-.03em;
+  text-align:center;text-wrap:balance;max-width:min(90vw,20ch);
+  color:var(--a3-aqua);
+}
 </style>
 
 <div id="stage">
@@ -284,8 +503,222 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
     <span class="final rv" id="s9final">have patience and don't get too excited</span>
   </section>
 
+  <!-- ===================== ACT TWO — story time ========================= -->
+
+  <section class="scene act2" id="s10">
+    <h1 class="title">story time</h1>
+  </section>
+
+  <section class="scene act2" id="s11" style="--mh:50vh">
+    <h1 class="title">Patrick</h1>
+    <span class="a2line c-paper rv" id="s11line">field sales</span>
+    <div class="media">
+      <div class="slot rv" id="s11media" data-kind="media">
+        <div class="clipwrap" style="--far:1.7787">
+          <div class="cshadow" id="s11shadow"></div>
+          <div class="clipbox" id="s11clip"><img src="./assets/running.png" alt=""></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s12" style="--mh:50vh">
+    <div class="duo">
+      <span class="lft rv" id="s12a">wanna checkout my bondsAndSharesAddedTodayFinal.pdf</span>
+      <span class="rgt rv" id="s12b">ew PDF, NO!!</span>
+    </div>
+    <div class="media">
+      <div class="slot rv" id="s12media" data-kind="media"><img src="./assets/bondsOrShares.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s13" style="--mh:46vh">
+    <span class="a2line c-paper rv" id="s13line">off the cliff...</span>
+    <span class="dots" id="s13dots">...</span>
+    <div class="media">
+      <div class="slot rv" id="s13media" data-kind="media"><img src="./assets/pushed.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s14" style="--mh:54vh">
+    <span class="a2line ins rv" id="s14line"></span>
+    <div class="media">
+      <div class="slot rv" id="s14media" data-kind="media">
+        <div class="frame" style="--far:1.5">
+          <img src="./assets/pond.png" alt="">
+          <span class="say pond rv" id="s14want">what do you want</span>
+          <span class="say guy rv"  id="s14inv">investor !</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s15">
+    <canvas id="s15canvas"></canvas>
+    <h1 class="title rv" id="s15title">he got the investor</h1>
+  </section>
+
+  <section class="scene act2" id="s16" style="--mh:52vh">
+    <h1 class="title">back in the office</h1>
+    <span class="a2line c-cyan rv" id="s16line">joe</span>
+    <div class="media">
+      <div class="slot nslot rv" id="s16media" data-kind="media">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/office.jpg" alt=""></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s17" style="--mh:46vh">
+    <h1 class="title">register this investor</h1>
+    <div class="media">
+      <div class="slot rv" id="s17xl" data-kind="media"></div>
+    </div>
+    <span class="a2line c-paper rv" id="s17line">into a XL sheet</span>
+  </section>
+
+  <section class="scene act2" id="s18" style="--mh:46vh">
+    <div class="files">
+      <span class="fn ok rv" id="s18f1">bondsAndSharesAddedTodayFinal.pdf</span>
+      <span class="fn no rv" id="s18f2">not in approvedBondsAndSharesAddedTodayFinal.pdf</span>
+    </div>
+    <div class="rowmedia">
+      <div class="cell nslot rv" id="s18left" data-kind="media" style="--car:1.170">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/office.jpg" alt=""></div></div>
+      </div>
+      <div class="cell rv" id="s18right" data-kind="media"><img src="./assets/call.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s19" style="--mh:46vh">
+    <h1 class="title">initiate the kyc</h1>
+    <div class="media">
+      <div class="slot rv" id="s19xl" data-kind="media"></div>
+    </div>
+    <span class="a2line c-paper rv" id="s19line">into a different XL sheet</span>
+  </section>
+
+  <section class="scene act2" id="s20">
+    <h1 class="title">in a different cabin..</h1>
+  </section>
+
+  <section class="scene act2" id="s21" style="--mh:54vh">
+    <h1 class="title">jack</h1>
+    <div class="media">
+      <div class="slot rv" id="s21media" data-kind="media"><img src="./assets/ancient.jpg" alt=""></div>
+    </div>
+    <span class="a2line c-paper rv" id="s21line">ancient guy (kyc approver)</span>
+  </section>
+
+  <section class="scene act2" id="s22">
+    <h1 class="title sm">ofcourse he can't make mistakes... right ?</h1>
+  </section>
+
+  <section class="scene act2" id="s23" style="--mh:46vh">
+    <h1 class="title">he did</h1>
+    <div class="media">
+      <div class="slot rv" id="s23xl" data-kind="media"></div>
+    </div>
+    <span class="a2line c-paper rv" id="s23line">updated kyc status on wrong cell of sheet</span>
+  </section>
+
+  <section class="scene act2" id="s24">
+    <h1 class="title">joe wasn't happy</h1>
+    <div class="ring" id="s24ring" style="--rh:42vh;--har:1.170">
+      <div class="hubimg nslot rv" id="s24media" data-kind="media">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/office.jpg" alt=""></div></div>
+      </div>
+      <span class="lbl rv" id="s24l0">transaction xl sheet</span>
+      <span class="lbl rv" id="s24l1">portfolio xl sheet</span>
+      <span class="lbl rv" id="s24l2">price history for a bond XL sheets</span>
+      <span class="lbl rv" id="s24l3">mails and messages to all the investors status xl sheet</span>
+      <span class="lbl rv" id="s24l4">privacy policy pdf</span>
+      <span class="lbl rv" id="s24l5">kyc documents whatsapp and xl sheets</span>
+      <span class="lbl rv" id="s24l6">new bonds and shares pdf</span>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s25" style="--mh:56vh">
+    <h1 class="title sm">now imagine monitoring this...</h1>
+    <div class="media">
+      <div class="slot nslot rv" id="s25media" data-kind="media">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/imagine.jpg" alt=""></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s26" style="--mh:44vh">
+    <h1 class="title sm">we have a team of disappointed and frustrated stakeholders</h1>
+    <div class="rowmedia">
+      <div class="cell rv" id="s26a" data-kind="media"><img src="./assets/call.png" alt=""></div>
+      <div class="cell nslot rv" id="s26b" data-kind="media" style="--car:0.873">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/imagine.jpg" alt=""></div></div>
+      </div>
+      <div class="cell nslot rv" id="s26c" data-kind="media" style="--car:0.943">
+        <div class="nshadow"></div>
+        <div class="nclip"><div class="nwrap"><img src="./assets/office.jpg" alt=""></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s27" style="--mh:50vh">
+    <h1 class="title">remember we have magic</h1>
+    <span class="a2line c-cyan rv" id="s27line">they gave all the files and ..</span>
+    <div class="media">
+      <div class="slot rv" id="s27media" data-kind="media"><img src="./assets/dump.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="scene act2" id="s28">
+    <h1 class="title">pond gave back a solution...</h1>
+  </section>
+
+  <!-- ===================== ACT THREE — the platform ===================== -->
+
+  <section class="scene act3" id="s29" style="--mh:52vh">
+    <h1 class="title c-aqua">a platform</h1>
+    <div class="media">
+      <div class="slot rv" id="s29media" data-kind="media">
+        <img id="logoGif" src="./assets/pond_logo_emerging_no_guy.gif" alt="">
+      </div>
+    </div>
+  </section>
+
+  <section class="scene act3" id="s30">
+    <h1 class="title">one solution for all the problems</h1>
+  </section>
+
+  <section class="scene act3" id="s31">
+    <div class="ring" id="s31ring">
+      <svg id="s31arrows"></svg>
+      <span class="hubword" id="s31hub">website</span>
+      <span class="lbl rv" id="s31l0">new bonds, shares ?</span>
+      <span class="lbl rv" id="s31l1">register new investor ?</span>
+      <span class="lbl rv" id="s31l2">kyc ?</span>
+      <span class="lbl rv" id="s31l3">portfolio ?</span>
+      <span class="lbl rv" id="s31l4">transaction history ?</span>
+      <span class="lbl rv" id="s31l5">dashboard ?</span>
+      <span class="lbl rv" id="s31l6">staff ?</span>
+      <span class="lbl rv" id="s31l7">leads ?</span>
+      <span class="lbl rv" id="s31l8">helpdesk ?</span>
+      <span class="lbl rv" id="s31l9">mass communications ?</span>
+    </div>
+  </section>
+
+  <section class="scene act3" id="s32" style="--mh:52vh">
+    <h1 class="finale">SHARE a BOND together</h1>
+    <div class="media">
+      <div class="slot rv" id="s32media" data-kind="media"><img src="./assets/sharebond.png" alt=""></div>
+    </div>
+  </section>
+
 </div>
 
+<div id="cut"></div>
 <div id="pre"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -305,6 +738,32 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
    ======================================================================== */
 const PATIENCE          = { w: 735, h: 490 };
 const GRAPH_IN_PATIENCE = { x: 547, y: 122, w: 82, h: 51 };
+
+/* ---- ACT TWO measured constants — nudge by hand if alignment is off ----
+   Crop rects are in each image's own pixel coordinates (like
+   GRAPH_IN_PATIENCE). Text anchors are percentages of image width/height, so
+   they track the picture on resize. Confidence notes are in the summary. */
+const ACT2 = {
+  RUNNING: { w:1672, h:940, split: 0.50 },        // he ends at ~40% w, she starts at ~59%
+  POND:    { w:1536, h:1024,
+             want:     { x:62, y:50 },            // open water, dead centre of the lake
+             investor: { x:38, y:36 } },          // just right of his head, in his eyeline
+  OFFICE:  { w:736, h:764,
+             full: { x:0,  y:0,   w:736, h:726 }, // bottom 38px dropped: stock watermark
+             guy:  { x:60, y:285, w:310, h:265 }, // him, the phone and the desk edge
+             face: { x:125,y:305, w:165, h:175 } },
+  IMAGINE: { w:1199, h:799,
+             full: { x:0,  y:0, w:1199, h:799 },
+             face: { x:650,y:5, w:310,  h:355 } }
+};
+
+/* landing cell of each spreadsheet flythrough, in grid cells from the sheet's
+   top-left. Scene 23 also names the neighbour that stays merely outlined. */
+const XL_CELLS = {
+  s17xl: { col: 66, row: 58 },
+  s19xl: { col: 40, row: 76 },
+  s23xl: { col: 84, row: 40, wrong: true, nbr: { col: 84, row: 39 } }
+};
 
 /* ---- one place to tune the whole deck ---------------------------------- */
 const D = { slide:0.9, reveal:0.5, media:0.62, zoomA:1.1, zoomB:1.2, zoomC:1.6 };
@@ -342,7 +801,23 @@ const s8stack    = $('s8stack');
 const s9mediaBox = $('s9mediaBox');
 const s9lines    = [$('s9l0'), $('s9l1'), $('s9l2')];
 
-const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8','s9'];
+const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8','s9',
+                's10','s11','s12','s13','s14','s15','s16','s17','s18','s19','s20',
+                's21','s22','s23','s24','s25','s26','s27','s28','s29','s30','s31','s32'];
+
+/* ---- scene 14's line, built as word spans so "magic" can be inserted ---- */
+const s14LineEl = $('s14line');
+const s14Words = {};
+'into the magic pond'.split(' ').forEach((w, i) => {
+  if (i) s14LineEl.appendChild(document.createTextNode(' '));
+  const s = document.createElement('span');
+  s.className = 'iw' + (w === 'magic' ? ' magic' : '');
+  s.textContent = w;
+  s14Words[w] = s;
+  s14LineEl.appendChild(s);
+});
+const magicWord = s14Words.magic;
+
 const RV = [...document.querySelectorAll('.rv')];
 RV.forEach((el, i) => el.dataset.rot = (i % 2 ? 1.8 : -1.8));
 const FLAT = new Set(['s9happy','s9sad','s9zoom']);   // crossfade in place, no drift
@@ -383,19 +858,93 @@ const SEQ = [
   { t:'swap',  from:'s9happy', to:'s9sad' },       // 29  sad.jpg
   { t:'graph' },                                   // 30  graph.jpg (already nested)
   { t:'zoomC' },                                   // 31  ZOOM C  -> patience.jpg
-  { t:'show',  el:'s9final' }                      // 32  closing line
+  { t:'show',  el:'s9final' },                     // 32  closing line
+
+  /* ---------------------- ACT TWO — story time ---------------------- */
+  { t:'cut',   scene:'s10' },                      // 33  blackout into act two
+  { t:'slide', scene:'s11', dir:'right' },         // 34
+  { t:'show',  el:'s11media' },                    // 35  running.png, left half only
+  { t:'show',  el:'s11line' },                     // 36  field sales
+  { t:'clip',  el:'s11clip' },                     // 37  the right half completes it
+  { t:'slide', scene:'s12', dir:'right' },         // 38
+  { t:'show',  el:'s12media' },                    // 39  bondsOrShares.png
+  { t:'show',  el:'s12a' },                        // 40  wanna checkout my ...pdf
+  { t:'show',  el:'s12b' },                        // 41  ew PDF, NO!!
+  { t:'slide', scene:'s13', dir:'bottom' },        // 42
+  { t:'show',  el:'s13line', hide:'s13dots' },     // 43  off the cliff... (dots leave)
+  { t:'show',  el:'s13media' },                    // 44  pushed.png
+  { t:'slide', scene:'s14', dir:'bottom' },        // 45
+  { t:'show',  el:'s14media' },                    // 46  pond.png
+  { t:'show',  el:'s14line' },                     // 47  into the pond
+  { t:'insert' },                                  // 48  -> into the magic pond
+  { t:'show',  el:'s14want' },                     // 49  what do you want
+  { t:'show',  el:'s14inv' },                      // 50  investor !
+  { t:'slide', scene:'s15', dir:'right' },         // 51
+  { t:'confetti', el:'s15title' },                 // 52  he got the investor + burst
+  { t:'slide', scene:'s16', dir:'right' },         // 53
+  { t:'show',  el:'s16media' },                    // 54  office.jpg, tight on the guy
+  { t:'show',  el:'s16line' },                     // 55  joe
+  { t:'nest',  id:'s16media', to:1 },              // 56  pull back to the whole room
+  { t:'slide', scene:'s17', dir:'bottom' },        // 57
+  { t:'xl',    el:'s17xl' },                       // 58  spreadsheet flythrough
+  { t:'show',  el:'s17line' },                     // 59  into a XL sheet
+  { t:'slide', scene:'s18', dir:'right' },         // 60
+  { t:'show',  el:'s18left' },                     // 61  office crop, left
+  { t:'show',  el:'s18f1' },                       // 62  bondsAndShares...pdf
+  { t:'show',  el:'s18f2' },                       // 63  not in approved...pdf
+  { t:'show',  el:'s18right' },                    // 64  call.png, right
+  { t:'slide', scene:'s19', dir:'right' },         // 65
+  { t:'xl',    el:'s19xl' },                       // 66  spreadsheet flythrough
+  { t:'show',  el:'s19line' },                     // 67  into a different XL sheet
+  { t:'slide', scene:'s20', dir:'bottom' },        // 68
+  { t:'slide', scene:'s21', dir:'right' },         // 69
+  { t:'show',  el:'s21media' },                    // 70  ancient.jpg
+  { t:'show',  el:'s21line' },                     // 71  ancient guy (kyc approver)
+  { t:'slide', scene:'s22', dir:'bottom' },        // 72
+  { t:'slide', scene:'s23', dir:'right' },         // 73
+  { t:'xl',    el:'s23xl' },                       // 74  the wrong-cell variant
+  { t:'show',  el:'s23line' },                     // 75  updated kyc status on wrong cell
+  { t:'slide', scene:'s24', dir:'bottom' },        // 76
+  { t:'show',  el:'s24media' },                    // 77  office crop, centred small
+  { t:'group', els:['s24l0','s24l1','s24l2'] },    // 78
+  { t:'group', els:['s24l3','s24l4'] },            // 79
+  { t:'group', els:['s24l5','s24l6'] },            // 80
+  { t:'slide', scene:'s25', dir:'right' },         // 81
+  { t:'show',  el:'s25media' },                    // 82  imagine.jpg, full
+  { t:'nest',  id:'s25media', to:0 },              // 83  slow push in to the face
+  { t:'slide', scene:'s26', dir:'bottom' },        // 84
+  { t:'show',  el:'s26a' },                        // 85  call.png
+  { t:'show',  el:'s26b' },                        // 86  imagine.jpg face crop
+  { t:'show',  el:'s26c' },                        // 87  office.jpg face crop
+  { t:'slide', scene:'s27', dir:'right' },         // 88
+  { t:'show',  el:'s27line' },                     // 89  they gave all the files and ..
+  { t:'show',  el:'s27media' },                    // 90  dump.png
+  { t:'slide', scene:'s28', dir:'bottom' },        // 91
+
+  /* --------------------- ACT THREE — the platform -------------------- */
+  { t:'slide', scene:'s29', dir:'right' },         // 92
+  { t:'show',  el:'s29media' },                    // 93  the logo gif, from frame 0
+  { t:'slide', scene:'s30', dir:'bottom' },        // 94
+  { t:'slide', scene:'s31', dir:'right' },         // 95
+  { t:'group', els:['s31l0','s31l1','s31l2','s31l3'] }, // 96
+  { t:'group', els:['s31l4','s31l5','s31l6'] },    // 97
+  { t:'group', els:['s31l7','s31l8','s31l9'] },    // 98
+  { t:'slide', scene:'s32', dir:'bottom' },        // 99
+  { t:'show',  el:'s32media' }                     // 100 sharebond.png
 ];
 const LAST = SEQ.length - 1;
 
 /* ---- state is always derived from the beat list, never mutated in place - */
 function stateAt(i){
-  const st = { scene:'s1', vis:{}, flat:{}, zoomA:false, zoomB:false, graph:false, zoomC:false };
+  const st = { scene:'s1', vis:{}, flat:{}, zoomA:false, zoomB:false, graph:false, zoomC:false,
+               /* act two */ hidden:{}, open:{}, ins:{}, xl:{}, nest:{}, confetti:false };
   for (let k = 0; k <= i; k++){
     const b = SEQ[k];
     switch (b.t){
       case 'init':
       case 'slide':    st.scene = b.scene; break;
-      case 'show':     st.vis[b.el] = 1; delete st.flat[b.el]; break;
+      case 'show':     st.vis[b.el] = 1; delete st.flat[b.el];
+                       if (b.hide) st.hidden[b.hide] = 1; break;
       case 'swap':     delete st.vis[b.from]; st.flat[b.from] = 1;
                        st.vis[b.to] = 1; delete st.flat[b.to]; break;
       case 'zoomA':    st.scene = 's8'; st.zoomA = true; break;
@@ -404,6 +953,15 @@ function stateAt(i){
       case 'graph':    delete st.vis.s9sad; st.flat.s9sad = 1;
                        st.vis.s9zoom = 1; st.graph = true; break;
       case 'zoomC':    st.zoomC = true; break;
+
+      /* ---- act two ---- */
+      case 'cut':      st.scene = b.scene; break;
+      case 'clip':     st.open[b.el] = 1; break;
+      case 'insert':   st.ins.s14line = 1; break;
+      case 'confetti': st.vis[b.el] = 1; st.confetti = true; break;
+      case 'nest':     st.nest[b.id] = b.to; break;
+      case 'xl':       st.vis[b.el] = 1; st.xl[b.el] = 1; break;
+      case 'group':    b.els.forEach(e => { st.vis[e] = 1; delete st.flat[e]; }); break;
     }
   }
   return st;
@@ -534,6 +1092,477 @@ function setNest(p){
 }
 
 /* ===========================================================================
+   ACT TWO MACHINERY — deliberately separate from scene 9's nest/zoom code.
+   The two do a similar job; sharing an abstraction would put act one at risk,
+   so this duplicates the maths rather than refactoring it.
+   ======================================================================== */
+
+/* ---- a nested crop/full pair: p=0 the crop fills the slot, p=1 the whole
+        picture fits it. Same principle as setNest(): the visible sub-rect's
+        centre moves linearly while its width moves exponentially, so the
+        camera reads at a constant rate rather than collapsing at the end. */
+function makeNest(slot, opt){
+  const clip = slot.querySelector('.nclip');
+  const wrap = slot.querySelector('.nwrap');
+  const shad = slot.querySelector('.nshadow');
+  let g = null;
+
+  function remeasure(){
+    const W = slot.clientWidth, H = slot.clientHeight;
+    if (!W || !H) return;
+    wrap.style.width  = opt.w + 'px';
+    wrap.style.height = opt.h + 'px';
+    const fAR = opt.full.w / opt.full.h;
+    const b1w = Math.min(W, H * fAR), b1h = b1w / fAR;   // the p=1 box
+    shad.style.width  = b1w + 'px';  shad.style.height = b1h + 'px';
+    shad.style.marginLeft = (-b1w/2) + 'px'; shad.style.marginTop = (-b1h/2) + 'px';
+    g = { W, H, b1w, b1h };
+  }
+
+  function setP(p){
+    if (!g) return;
+    const { W, H, b1w, b1h } = g;
+    const C = opt.crop, F = opt.full;
+    const cAR = C.w / C.h, fAR = F.w / F.h;
+    const ar = cAR + (fAR - cAR) * p;                     // aspect lerps
+    const sw = C.w * Math.pow(F.w / C.w, p);              // width is exponential
+    const sh = sw / ar;
+    const scx = (C.x + C.w/2) + ((F.x + F.w/2) - (C.x + C.w/2)) * p;
+    const scy = (C.y + C.h/2) + ((F.y + F.h/2) - (C.y + C.h/2)) * p;
+    const bw = Math.min(W, H * ar), bh = bw / ar;         // on-screen box
+    const s  = bw / sw;                                   // image px -> screen px
+    const bl = (W - bw)/2, bt = (H - bh)/2;
+    wrap.style.transform =
+      `translate3d(${bl - s*(scx - sw/2)}px,${bt - s*(scy - sh/2)}px,0) scale(${s})`;
+    clip.style.clipPath = `inset(${bt}px ${W-bl-bw}px ${H-bt-bh}px ${bl}px round 18px)`;
+    shad.style.transform = `scale(${bw/b1w},${bh/b1h})`;
+  }
+  return { setP, remeasure, p0: opt.p0 };
+}
+
+const NESTS = {};
+function initNests(){
+  const O = ACT2.OFFICE, I = ACT2.IMAGINE;
+  const mk = (id, o) => { if ($(id)) NESTS[id] = makeNest($(id), o); };
+  mk('s16media', { w:O.w, h:O.h, full:O.full, crop:O.guy,  p0:0 });   // pulls back
+  mk('s18left',  { w:O.w, h:O.h, full:O.full, crop:O.guy,  p0:0 });   // static crop
+  mk('s24media', { w:O.w, h:O.h, full:O.full, crop:O.guy,  p0:0 });   // static crop
+  mk('s25media', { w:I.w, h:I.h, full:I.full, crop:I.face, p0:1 });   // pushes in
+  mk('s26b',     { w:I.w, h:I.h, full:I.full, crop:I.face, p0:0 });   // static crop
+  mk('s26c',     { w:O.w, h:O.h, full:O.full, crop:O.face, p0:0 });   // static crop
+}
+
+/* ---- the spreadsheet: grid lines and coloured blocks. No glyphs, ever. --
+        Rotation and scale live on .xlsheet with its transform-origin pinned
+        to the target cell, so the camera translate is a constant and the
+        landing is exact whatever the scale. */
+function buildXL(slot, cell){
+  // real spreadsheet proportions — wide, short cells, not squares
+  const CW = 92, CH = 30, COLS = 120, ROWS = 120;
+  const box   = document.createElement('div'); box.className = 'xlbox';
+  const cam   = document.createElement('div'); cam.className = 'xlcam';
+  const sheet = document.createElement('div'); sheet.className = 'xlsheet';
+  sheet.style.setProperty('--cw', CW + 'px');
+  sheet.style.setProperty('--ch', CH + 'px');
+  sheet.style.width  = COLS * CW + 'px';
+  sheet.style.height = ROWS * CH + 'px';
+  cam.appendChild(sheet); box.appendChild(cam); slot.appendChild(box);
+
+  // deterministic scatter, so reverse and screenshots are always identical
+  let seed = 0x2f6e2b1 ^ (cell.col * 7919 + cell.row * 104729);
+  const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+  const tints = ['rgba(95,227,208,.30)','rgba(232,217,184,.85)','rgba(232,217,184,.55)',
+                 'rgba(24,42,48,.13)',  'rgba(95,227,208,.14)'];
+  const frag = document.createDocumentFragment();
+  // 520 blocks, 1-5 cells wide, is enough to read as dense at both the wide
+  // and the landed view while keeping the sheet's first rasterisation cheap
+  for (let i = 0; i < 520; i++){
+    const b = document.createElement('div'); b.className = 'xlblk';
+    const c = Math.floor(rnd()*COLS), r = Math.floor(rnd()*ROWS);
+    const n = 1 + Math.floor(rnd()*5);
+    b.style.left = (c*CW+1)+'px';   b.style.top    = (r*CH+1)+'px';
+    b.style.width = (n*CW-2)+'px';  b.style.height = (CH-2)+'px';
+    b.style.background = tints[Math.floor(rnd()*tints.length)];
+    frag.appendChild(b);
+  }
+  const tc = document.createElement('div'); tc.className = 'xlcell';
+  tc.style.left = (cell.col*CW+1)+'px'; tc.style.top = (cell.row*CH+1)+'px';
+  tc.style.width = (CW-2)+'px';         tc.style.height = (CH-2)+'px';
+  tc.style.background = cell.wrong ? 'var(--a2-alarm)' : 'var(--a2-cyan)';
+  frag.appendChild(tc);
+  if (cell.nbr){
+    const nb = document.createElement('div'); nb.className = 'xlnbr';
+    nb.style.left = (cell.nbr.col*CW+1)+'px'; nb.style.top = (cell.nbr.row*CH+1)+'px';
+    nb.style.width = (CW-2)+'px';            nb.style.height = (CH-2)+'px';
+    nb.style.boxShadow = 'inset 0 0 0 3px var(--a2-cyan)';
+    frag.appendChild(nb);
+  }
+  sheet.appendChild(frag);
+
+  const cx = cell.col*CW + CW/2, cy = cell.row*CH + CH/2;
+  sheet.style.transformOrigin = cx + 'px ' + cy + 'px';
+
+  let S0 = 0.25;
+  const S1 = 1.0;
+  function remeasure(){
+    const W = slot.clientWidth, H = slot.clientHeight;
+    if (!W || !H) return;
+    cam.style.transform = `translate3d(${W/2 - cx}px,${H/2 - cy}px,0)`;
+    // smallest scale at which the sheet still covers the box on every side,
+    // with headroom for the tilt
+    S0 = Math.min(0.5, Math.max(
+      W / (2 * Math.min(cx, COLS*CW - cx)),
+      H / (2 * Math.min(cy, ROWS*CH - cy))) * 1.28);
+  }
+  function setP(p){                         // 0 = wide and tilted, 1 = landed
+    sheet.style.transform =
+      `rotate(${(1-p) * -6.5}deg) scale(${S0 * Math.pow(S1/S0, p)})`;
+  }
+  return { setP, remeasure, cell: tc, wrong: !!cell.wrong };
+}
+
+const XLS = {};
+function initXL(){
+  Object.keys(XL_CELLS).forEach(id => { if ($(id)) XLS[id] = buildXL($(id), XL_CELLS[id]); });
+}
+
+/* ---- scene 11's half-image clip. The shadow box behind it is scaled in
+        lockstep so the picture always looks like a real object, half or
+        whole, without a per-frame filter. ------------------------------- */
+function setClip(el, f){
+  const split = ACT2.RUNNING.split;
+  el.style.clipPath = `inset(0% ${(1 - split) * 100 * (1 - f)}% 0% 0% round 18px)`;
+  const sh = $('s11shadow');
+  if (sh) sh.style.transform = `scaleX(${split + (1 - split) * f})`;
+}
+
+/* ---- scene 15's confetti ----------------------------------------------- */
+const cfCanvas = $('s15canvas'), cfCtx = cfCanvas.getContext('2d');
+const CF_COLORS = ['#5fe3d0','#e8d9b8','#6feede','#ff5a4d','#f6efe6'];
+let cfRaf = 0, cfParts = [], cfW = 0, cfH = 0;
+
+function confettiSize(){
+  const s = $('s15');
+  cfW = s.clientWidth; cfH = s.clientHeight;
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  cfCanvas.width  = Math.max(1, Math.round(cfW * dpr));
+  cfCanvas.height = Math.max(1, Math.round(cfH * dpr));
+  cfCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function confettiStop(){
+  if (cfRaf) cancelAnimationFrame(cfRaf);
+  cfRaf = 0; cfParts.length = 0;
+  cfCtx.clearRect(0, 0, cfW, cfH);
+}
+function confettiFire(){
+  confettiStop();
+  const cx = cfW/2, cy = cfH/2, DUR = 1.6;
+  for (let i = 0; i < 120; i++){
+    const a = Math.random() * Math.PI * 2, sp = 240 + Math.random() * 640;
+    cfParts.push({ x:cx, y:cy, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp - 200,
+      w:5 + Math.random()*8, h:8 + Math.random()*12,
+      r:Math.random()*Math.PI, vr:(Math.random()-.5)*11,
+      c:CF_COLORS[i % CF_COLORS.length], life:0 });
+  }
+  let last = performance.now();
+  const tick = now => {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    cfCtx.clearRect(0, 0, cfW, cfH);
+    let alive = 0;
+    for (const p of cfParts){
+      p.life += dt;
+      if (p.life > DUR) continue;
+      alive++;
+      p.vy += 1500 * dt; p.vx *= .985; p.vy *= .995;
+      p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+      const a = p.life < DUR * .70 ? 1 : 1 - (p.life - DUR * .70) / (DUR * .30);
+      cfCtx.save();
+      cfCtx.globalAlpha = Math.max(0, a);
+      cfCtx.translate(p.x, p.y); cfCtx.rotate(p.r);
+      cfCtx.fillStyle = p.c; cfCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      cfCtx.restore();
+    }
+    if (alive) cfRaf = requestAnimationFrame(tick);
+    else confettiStop();
+  };
+  cfRaf = requestAnimationFrame(tick);
+}
+
+/* ---- the two label rings ----------------------------------------------- */
+const S24L = ['s24l0','s24l1','s24l2','s24l3','s24l4','s24l5','s24l6'].map($);
+const S31L = ['s31l0','s31l1','s31l2','s31l3','s31l4',
+              's31l5','s31l6','s31l7','s31l8','s31l9'].map($);
+const ARROWS = [];
+
+/* Every position comes from the viewport, never from hardcoded offsets.
+   Each label is pushed out along its own ray until ITS OWN box clears the
+   hub's box — a single shared ellipse radius does not work, because a short
+   label at 45 degrees ends up back on top of the hub. It is then allowed to
+   travel a further fraction k of the way to the container edge, so the ring
+   spreads into whatever space the viewport actually has. */
+function placeRing(ring, labels, hub, padX, padY, k){
+  const W = ring.clientWidth, H = ring.clientHeight;
+  if (!W || !H) return;
+  const hw = hub.w / 2, hh = hub.h / 2, M = 8, GAP = 15;
+  const n = labels.length, put = [];
+  labels.forEach((el, i) => {
+    el.style.left = ''; el.style.top = '';
+    const r = el.getBoundingClientRect(), w = r.width, h = r.height;
+    const a  = (-90 + i * 360 / n) * Math.PI / 180;
+    const cx = Math.cos(a), cy = Math.sin(a);
+    const ax = Math.max(Math.abs(cx), 1e-4), ay = Math.max(Math.abs(cy), 1e-4);
+    const tClear = Math.min((hw + w/2 + padX) / ax, (hh + h/2 + padY) / ay);
+    const tMax   = Math.max(Math.min((W/2 - w/2 - M) / ax, (H/2 - h/2 - M) / ay), tClear);
+    let t = Math.min(tClear + k * (tMax - tClear), tMax);
+    // A uniform angular ring crowds the top and bottom of a 16:9 box, so nudge
+    // each label further out along ITS OWN ray until it clears the ones already
+    // placed. Radial-only, so the arrows stay honest, and fully deterministic.
+    for (let s = 0; s < 70; s++){
+      const x = W/2 + t*cx, y = H/2 + t*cy;
+      const hit = put.some(p => Math.abs(p.x - x) < (p.w + w)/2 + GAP &&
+                                Math.abs(p.y - y) < (p.h + h)/2 + GAP);
+      if (!hit || t >= tMax) break;
+      t = Math.min(t + 9, tMax);
+    }
+    const x = W/2 + t * cx, y = H/2 + t * cy;
+    el.style.left = (x - w/2) + 'px';
+    el.style.top  = (y - h/2) + 'px';
+    el._cx = x; el._cy = y; el._w = w; el._h = h;
+    put.push({ x, y, w, h });
+  });
+}
+
+function layoutRings(){
+  // scene 24 — the office crop is the hub; centre it by left/top, not transform
+  const r24 = $('s24ring'), hub24 = $('s24media');
+  if (r24 && r24.clientWidth){
+    const hw = hub24.offsetWidth, hh = hub24.offsetHeight;
+    hub24.style.left = (r24.clientWidth/2 - hw/2) + 'px';
+    hub24.style.top  = (r24.clientHeight/2 - hh/2) + 'px';
+    placeRing(r24, S24L, { w:hw, h:hh }, 34, 26, 0.40);
+  }
+  // scene 31 — the word "website" is the hub, and every label points at it
+  const r31 = $('s31ring'), hub31 = $('s31hub');
+  if (r31 && r31.clientWidth){
+    const hr = hub31.getBoundingClientRect();
+    placeRing(r31, S31L, { w:hr.width, h:hr.height }, 44, 36, 0.52);
+    buildArrows(r31, hub31);
+  }
+}
+
+/* One <path> per label: shaft plus two arrowhead strokes as a single path, so
+   a stroke-dashoffset sweep draws the shaft and then the head, inward. */
+function buildArrows(ring, hub){
+  const svg = $('s31arrows');
+  const W = ring.clientWidth, H = ring.clientHeight;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  const hr = hub.getBoundingClientRect(), rr = ring.getBoundingClientRect();
+  const hcx = hr.left - rr.left + hr.width/2, hcy = hr.top - rr.top + hr.height/2;
+  const hx = hr.width/2 + 16, hy = hr.height/2 + 12;
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  ARROWS.length = 0;
+  const ray = (ex, ey, ux, uy) => Math.min(
+    Math.abs(ux) < 1e-6 ? 1e9 : ex / Math.abs(ux),
+    Math.abs(uy) < 1e-6 ? 1e9 : ey / Math.abs(uy));
+
+  S31L.forEach(el => {
+    const dx = hcx - el._cx, dy = hcy - el._cy;
+    const len = Math.hypot(dx, dy) || 1, ux = dx/len, uy = dy/len;
+    const s = ray(el._w/2, el._h/2, ux, uy) + 9;      // just outside the label
+    const e = ray(hx, hy, ux, uy);                    // just outside the hub
+    const x0 = el._cx + ux*s, y0 = el._cy + uy*s;
+    const x1 = hcx - ux*e,    y1 = hcy - uy*e;
+    if (Math.hypot(x1-x0, y1-y0) < 14) return;        // no room: skip the arrow
+    const rot = (a) => [ -ux*Math.cos(a) + uy*Math.sin(a),
+                         -ux*Math.sin(a) - uy*Math.cos(a) ];
+    const A = rot(0.42), B = rot(-0.42);
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d',
+      `M${x0.toFixed(1)} ${y0.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}` +
+      `M${(x1+A[0]*10).toFixed(1)} ${(y1+A[1]*10).toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}` +
+      `M${(x1+B[0]*10).toFixed(1)} ${(y1+B[1]*10).toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}`);
+    svg.appendChild(p);
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L;
+    ARROWS.push({ id: el.id, path: p, len: L });
+  });
+}
+
+/* ---- act two's measuring pass, called from remeasure() ----------------- */
+function measureAct2(){
+  // scene 14: measure "magic" while it is in normal flow, then render() decides
+  magicWord.style.position = ''; magicWord.style.left = ''; magicWord.style.top = '';
+  const lr = s14LineEl.getBoundingClientRect(), mr = magicWord.getBoundingClientRect();
+  magicWord._l = mr.left - lr.left;
+  magicWord._t = mr.top  - lr.top;
+
+  // scene 14's two voices sit at percentage anchors inside the picture's own
+  // frame, so they track it on resize. Centred by margin, not by transform —
+  // they are .rv elements and render() owns their transform.
+  [[$('s14want'), ACT2.POND.want], [$('s14inv'), ACT2.POND.investor]]
+    .forEach(([el, a]) => {
+      el.style.left = a.x + '%'; el.style.top = a.y + '%';
+      el.style.marginLeft = ''; el.style.marginTop = '';
+      const r = el.getBoundingClientRect();
+      el.style.marginLeft = (-r.width / 2) + 'px';
+      el.style.marginTop  = (-r.height / 2) + 'px';
+    });
+
+  Object.keys(NESTS).forEach(k => NESTS[k].remeasure());
+  Object.keys(XLS).forEach(k => XLS[k].remeasure());
+  confettiSize();
+  confettiStop();
+  layoutRings();
+}
+
+/* ---- act two's slice of render() --------------------------------------- */
+function renderAct2(st){
+  gsap.set($('s13dots'), st.hidden.s13dots
+    ? { opacity:0, y:-12, scale:.94 } : { opacity:1, y:0, scale:1 });
+
+  setClip($('s11clip'), st.open.s11clip ? 1 : 0);
+
+  if (st.ins.s14line){
+    magicWord.style.position = 'static';
+    magicWord.style.left = ''; magicWord.style.top = '';
+    gsap.set(magicWord, { opacity:1, x:0, y:0, scale:1 });
+  } else {
+    magicWord.style.position = 'absolute';
+    magicWord.style.left = magicWord._l + 'px';
+    magicWord.style.top  = magicWord._t + 'px';
+    gsap.set(magicWord, { opacity:0, x:0, y:-16, scale:.86 });
+  }
+  gsap.set([s14Words.into, s14Words.the, s14Words.pond], { x:0, y:0, scale:1, opacity:1 });
+
+  Object.keys(NESTS).forEach(id => {
+    const n = NESTS[id];
+    n.setP((id in st.nest) ? st.nest[id] : n.p0);
+  });
+
+  Object.keys(XLS).forEach(id => {
+    XLS[id].setP(st.xl[id] ? 1 : 0);
+    gsap.set(XLS[id].cell, { opacity:1, scale:1 });
+  });
+
+  if (!(st.scene === 's15' && st.confetti)) confettiStop();
+
+  ARROWS.forEach(a => {
+    const on = !!st.vis[a.id];
+    a.path.style.strokeDashoffset = on ? '0' : String(a.len);
+    a.path.style.opacity = on ? '.72' : '0';
+  });
+}
+
+/* ---- act two's beat timelines ------------------------------------------ */
+function cutTL(fromScene, toScene){
+  const a = $(fromScene), b = $(toScene), c = $('cut');
+  return gsap.timeline()
+    .to(c, { opacity:1, duration:.28, ease:'power2.in' })
+    .add(() => {
+      a.style.visibility = 'hidden';
+      gsap.set(b, { xPercent:0, yPercent:0 });
+      b.style.visibility = 'visible';
+    })
+    .to(c, { opacity:0, duration:.34, ease:'power2.out' });
+}
+
+function clipTL(el, back){
+  const o = { f: back ? 1 : 0 };
+  return gsap.timeline().to(o, { f: back ? 0 : 1, duration:.95, ease:'power3.inOut',
+    onUpdate(){ setClip(el, o.f); } });
+}
+
+/* the same pin/unpin + Flip pattern the deck already uses for Bonds/promise */
+function insertTL(back){
+  const flank = [s14Words.into, s14Words.the, s14Words.pond];
+  const tl = gsap.timeline();
+  if (!back){
+    const state = Flip.getState(flank);
+    magicWord.style.position = 'static';
+    magicWord.style.left = ''; magicWord.style.top = '';
+    tl.add(Flip.from(state, { duration:.75, ease:'power3.inOut' }), 0);
+    tl.fromTo(magicWord, { opacity:0, y:-16, scale:.86 },
+      { opacity:1, y:0, scale:1, duration:.52, ease:'back.out(2)' }, .26);
+  } else {
+    const state = Flip.getState(flank);
+    magicWord.style.position = 'absolute';
+    magicWord.style.left = magicWord._l + 'px';
+    magicWord.style.top  = magicWord._t + 'px';
+    tl.add(Flip.from(state, { duration:.75, ease:'power3.inOut' }), 0);
+    tl.to(magicWord, { opacity:0, y:-16, scale:.86, duration:.34, ease:'power2.in' }, 0);
+  }
+  return tl;
+}
+
+function confettiTL(el, back, st){
+  const tl = gsap.timeline();
+  if (!back){
+    tl.fromTo(el, hiddenFor(el, st), { ...shown(), duration:D.reveal, ease:EASE.reveal }, 0);
+    tl.add(() => confettiFire(), .05);
+  } else {
+    tl.add(() => confettiStop(), 0);
+    tl.to(el, { ...hiddenFor(el, st), duration:D.reveal*.8, ease:'power2.inOut' }, 0);
+  }
+  return tl;
+}
+
+function nestTL(id, to, back){
+  const n = NESTS[id];
+  const a = back ? to : n.p0, b = back ? n.p0 : to;
+  const o = { p:a };
+  const slow = (id === 's25media');           // dread, not a reveal
+  return gsap.timeline().to(o, { p:b,
+    duration: slow ? 3.0 : 1.6,
+    ease: slow ? 'power1.inOut' : 'power2.inOut',
+    onUpdate(){ n.setP(o.p); } });
+}
+
+function xlTL(id, back){
+  const x = XLS[id], slot = $(id), tl = gsap.timeline();
+  const o = { p: back ? 1 : 0 };
+  if (!back){
+    tl.fromTo(slot, hiddenMedia(), { ...shown(), duration:.55, ease:EASE.reveal }, 0);
+    tl.to(o, { p:1, duration:1.1, ease:'power3.inOut', onUpdate(){ x.setP(o.p); } }, 0);
+    if (x.wrong) tl.to(x.cell, { opacity:.18, duration:.12, ease:'power2.inOut',
+                                yoyo:true, repeat:3 }, 1.06);
+    else         tl.to(x.cell, { scale:1.24, duration:.17, ease:'power2.out',
+                                yoyo:true, repeat:1 }, 1.06);
+  } else {
+    tl.to(o, { p:0, duration:1.0, ease:'power3.inOut', onUpdate(){ x.setP(o.p); } }, 0);
+    tl.to(slot, { ...hiddenMedia(), duration:.5, ease:'power2.inOut' }, .45);
+  }
+  return tl;
+}
+
+function groupTL(els, back, stBefore, stAfter){
+  const tl = gsap.timeline();
+  els.forEach((id, i) => {
+    const el = $(id);
+    const ar = ARROWS.find(a => a.id === id);
+    if (!back){
+      tl.fromTo(el, hiddenFor(el, stBefore),
+        { ...shown(), duration:D.reveal, ease:EASE.reveal }, i * .06);
+      if (ar) tl.fromTo(ar.path, { strokeDashoffset:ar.len, opacity:0 },
+        { strokeDashoffset:0, opacity:.72, duration:.58, ease:'power2.out' }, i * .06 + .07);
+    } else {
+      const at = (els.length - 1 - i) * .05;
+      tl.to(el, { ...hiddenFor(el, stAfter), duration:D.reveal*.8, ease:'power2.inOut' }, at);
+      if (ar) tl.to(ar.path, { strokeDashoffset:ar.len, opacity:0,
+        duration:.4, ease:'power2.in' }, at);
+    }
+  });
+  return tl;
+}
+
+/* rule: the logo gif restarts from frame 0 every time its beat is entered,
+   forward or in reverse. Re-assigning src is what actually rewinds a gif. */
+function restartGif(){
+  const g = $('logoGif');
+  if (g) g.src = './assets/pond_logo_emerging_no_guy.gif';
+}
+
+/* ===========================================================================
    RENDER — the single source of truth. Every beat ends by calling it, so the
    deck can never drift out of a canonical state.
    ======================================================================== */
@@ -609,6 +1638,8 @@ function render(st){
 
   if (st.scene === 's6' && st.vis.s6media) riskVid.play().catch(()=>{});
   else riskVid.pause();
+
+  renderAct2(st);
 }
 
 /* ===========================================================================
@@ -739,9 +1770,25 @@ let index = 0, busy = false, queued = 0, ready = false, activeTL = null;
 function buildTL(from, to){
   const fwd = to > from;
   const b   = SEQ[fwd ? to : from];
+
+  // entering the logo-gif beat rewinds it to frame 0. "Entering" has to mean
+  // arriving in scene 29 with the gif up, not just the gif becoming visible —
+  // vis is cumulative, so coming back from scene 30 would otherwise not count.
+  const sT = stateAt(to), sF = stateAt(from);
+  const up = s => s.scene === 's29' && !!s.vis.s29media;
+  if (up(sT) && !up(sF)) restartGif();
+
   switch (b.t){
-    case 'show':
-      return fwd ? showTL($(b.el), stateAt(from)) : hideTL($(b.el), stateAt(to));
+    case 'show': {
+      const tl = fwd ? showTL($(b.el), stateAt(from)) : hideTL($(b.el), stateAt(to));
+      if (b.hide){                       // one reveal that also retires a line
+        const h = $(b.hide);
+        if (fwd) tl.to(h, { opacity:0, y:-12, scale:.94, duration:.42, ease:'power2.in' }, 0);
+        else     tl.fromTo(h, { opacity:0, y:-12, scale:.94 },
+                   { opacity:1, y:0, scale:1, duration:.46, ease:EASE.reveal }, .08);
+      }
+      return tl;
+    }
     case 'swap': {
       const out = $(fwd ? b.from : b.to), inn = $(fwd ? b.to : b.from);
       return gsap.timeline()
@@ -759,6 +1806,18 @@ function buildTL(from, to){
     case 'zoomB':    return zoomB(!fwd);
     case 'graph':    return graphTL(!fwd);
     case 'zoomC':    return zoomC(!fwd);
+
+    /* ---- act two ---- */
+    case 'cut': {
+      const prev = stateAt((fwd ? to : from) - 1).scene;
+      return fwd ? cutTL(prev, b.scene) : cutTL(b.scene, prev);
+    }
+    case 'clip':     return clipTL($(b.el), !fwd);
+    case 'insert':   return insertTL(!fwd);
+    case 'confetti': return confettiTL($(b.el), !fwd, stateAt(fwd ? from : to));
+    case 'nest':     return nestTL(b.id, b.to, !fwd);
+    case 'xl':       return xlTL(b.el, !fwd);
+    case 'group':    return groupTL(b.els, !fwd, stateAt(from), stateAt(to));
   }
   return gsap.timeline();
 }
@@ -844,9 +1903,13 @@ function remeasure(){
   RV.forEach(el => gsap.set(el, { opacity:0, x:0, y:0, scale:1, rotate:0 }));
   gsap.set([...sentWords, promiseWord], { opacity:0, x:0, y:0, scale:1 });
   gsap.set([s8stack, s8mediaBox, s9mediaBox], { x:0, y:0, scale:1 });
-  if (bondsWord.parentNode !== $('s7pair')){ $('s7pair').appendChild(bondsWord); bondsWord.classList.remove('as-title'); }
+  // insertBefore, not appendChild: appending puts "Bonds" AFTER "Shares", and
+  // measure() then lays the pair out in DOM order, silently swapping the two
+  // words for the rest of the session. Only reachable by resizing after zoom A.
+  if (bondsWord.parentNode !== $('s7pair')){ $('s7pair').insertBefore(bondsWord, sharesWord); bondsWord.classList.remove('as-title'); }
   if (promiseWord.parentNode !== sentEl){ sentEl.insertBefore(promiseWord, promiseAnchor); promiseWord.classList.remove('as-title'); }
   measure();
+  measureAct2();
 }
 
 /* ===========================================================================
@@ -869,6 +1932,8 @@ function boot(){
   gsap.registerPlugin(Flip);
   gsap.config({ force3D:true });
   gsap.defaults({ overwrite:'auto' });
+  initNests();
+  initXL();
   preload().then(() => {
     remeasure();
     render(stateAt(0));

@@ -151,6 +151,35 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
 .sentence .w{white-space:nowrap;will-change:transform,opacity}
 .w.key{color:var(--pink);font-weight:700}
 
+/* ---- scene 8's little bond table: a glance, not a spreadsheet. No cell
+       borders, no striping, no header — hairline rules between rows only,
+       muted ink for the labels and one act-one accent for the numbers. ---- */
+.btable{
+  display:grid;grid-template-columns:1fr auto;column-gap:0;
+  width:min(30ch,46vw);
+  font-size:clamp(14px,1.25vw,23px);line-height:1.45;
+  will-change:transform,opacity;
+}
+/* no column gap, so the two cells' top borders meet and the rule runs
+   unbroken across the row; the columns are separated by padding instead */
+.btable>*{padding:.30em 0;border-top:1px solid rgba(246,239,230,.13)}
+.btable>:nth-child(-n+2){border-top:0}
+.btable .k{text-align:left;color:rgba(246,239,230,.60);font-weight:500;
+  padding-right:clamp(26px,3.6vw,76px)}
+.btable .v{text-align:right;color:var(--lime);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---- scene 8's four annotations around promise.jpg. Pinned absolutely
+       inside #s8 by measureS8Ann(), so the stack that zoom A and zoom B
+       depend on is never restructured. ------------------------------------ */
+.ann{
+  position:absolute;
+  font-family:var(--body);font-weight:500;
+  font-size:var(--lbl);line-height:1.3;text-align:center;
+  max-width:17ch;
+  color:rgba(246,239,230,.70);
+  will-change:transform,opacity;
+}
+
 /* ---- scene 9 ----------------------------------------------------------- */
 .lines{display:flex;flex-direction:column;align-items:center;gap:clamp(4px,.9vh,12px)}
 .lines .ln{
@@ -280,6 +309,24 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
 /* ---- the blackout used for the act-one -> act-two cut ------------------- */
 #cut{position:fixed;inset:0;z-index:40;background:#000;opacity:0;pointer-events:none}
 
+/* ---- fullscreen toggle: icon only, no text, and it disappears with the
+       cursor under the existing idle rule. Sits below #cut so the act-two
+       blackout covers it too. --------------------------------------------- */
+#fsbtn{
+  position:fixed;z-index:39;
+  right:clamp(14px,1.5vw,30px);bottom:clamp(14px,1.5vh,30px);
+  width:clamp(28px,2.1vw,40px);height:clamp(28px,2.1vw,40px);
+  display:flex;align-items:center;justify-content:center;
+  background:none;border:0;padding:0;cursor:pointer;
+  color:var(--ink);opacity:.20;
+  transition:opacity .3s ease;
+}
+#fsbtn:hover{opacity:.60}
+#fsbtn:focus{outline:none}
+#fsbtn svg{width:100%;height:100%;fill:none;stroke:currentColor;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.nocursor #fsbtn,body.fs #fsbtn{opacity:0;pointer-events:none}
+
 /* ---- scene 12: two voices, one per side of the exchange. The row is capped
        to the picture's own width so each line sits over its speaker rather
        than out at the screen edge. --------------------------------------- */
@@ -408,6 +455,10 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
 
 <div id="stage">
 
+  <section class="scene" id="s0">
+    <h1 class="title">investor</h1>
+  </section>
+
   <section class="scene" id="s1" style="--mh:46vh">
     <h1 class="title">what is investment <em>?</em></h1>
     <div class="media">
@@ -474,10 +525,15 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
         <div class="tslot" id="promiseTitleSlot"></div>
       </div>
       <p class="sentence" id="s8sentence"></p>
+      <div class="btable" id="s8table"></div>
       <div class="media" id="s8mediaBox">
         <div class="slot rv" id="s8media" data-kind="media"><img src="./assets/promise.jpg" alt=""></div>
       </div>
     </div>
+    <span class="ann rv" id="s8a0">revenue in fiscals</span>
+    <span class="ann rv" id="s8a1">asset backing</span>
+    <span class="ann rv" id="s8a2">historical reputations</span>
+    <span class="ann rv" id="s8a3">industry</span>
   </section>
 
   <section class="scene" id="s9" style="--mh:38vh">
@@ -577,6 +633,10 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
     <span class="a2line c-paper rv" id="s17line">into a XL sheet</span>
   </section>
 
+  <section class="scene act2" id="s17b">
+    <h1 class="title">he saw huge mistake patrick made</h1>
+  </section>
+
   <section class="scene act2" id="s18" style="--mh:46vh">
     <div class="files">
       <span class="fn ok rv" id="s18f1">bondsAndSharesAddedTodayFinal.pdf</span>
@@ -632,11 +692,13 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
       </div>
       <span class="lbl rv" id="s24l0">transaction xl sheet</span>
       <span class="lbl rv" id="s24l1">portfolio xl sheet</span>
-      <span class="lbl rv" id="s24l2">price history for a bond XL sheets</span>
+      <span class="lbl rv" id="s24l2">XL sheet for share price history</span>
       <span class="lbl rv" id="s24l3">mails and messages to all the investors status xl sheet</span>
       <span class="lbl rv" id="s24l4">privacy policy pdf</span>
       <span class="lbl rv" id="s24l5">kyc documents whatsapp and xl sheets</span>
       <span class="lbl rv" id="s24l6">new bonds and shares pdf</span>
+      <span class="lbl rv" id="s24l7">pdf of companies</span>
+      <span class="lbl rv" id="s24l8">pdf of special shares</span>
     </div>
   </section>
 
@@ -719,6 +781,9 @@ img,video{display:block;-webkit-user-drag:none;user-select:none}
 </div>
 
 <div id="cut"></div>
+<button id="fsbtn" type="button">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>
+</button>
 <div id="pre"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -771,6 +836,13 @@ const EASE = { slide:'power3.inOut', reveal:'back.out(1.4)', zoom:'power3.inOut'
 
 const SENTENCE = "buying bond means lending some money to company on the promise of a fixed interest in some period of time and on maturity you get your base money back";
 
+/* ---- scene 8's bond table: three rows, two columns, no header ----------- */
+const BOND_TABLE = [
+  ['invested',       '50,000'],
+  ['monthly return', '500'],
+  ['on maturity',    '50,000']
+];
+
 const $ = id => document.getElementById(id);
 const stage = $('stage');
 
@@ -789,6 +861,17 @@ SENTENCE.split(' ').forEach((w, i) => {
 });
 promiseAnchor = promiseWord.nextSibling;      // the text node right after it
 
+/* ---- build the bond table. Deliberately NOT an .rv element: it belongs to
+        the same stage as the sentence and is driven bespoke in render(), and
+        adding one more .rv here would flip the reveal tilt of everything
+        downstream (RV index parity). --------------------------------------- */
+const s8table = $('s8table');
+BOND_TABLE.forEach(([k, v]) => {
+  const a = document.createElement('span'); a.className = 'k'; a.textContent = k;
+  const b = document.createElement('span'); b.className = 'v'; b.textContent = v;
+  s8table.append(a, b);
+});
+
 const bondsWord  = $('bondsWord');
 const sharesWord = $('sharesWord');
 const riskVid    = $('riskVid');
@@ -801,8 +884,8 @@ const s8stack    = $('s8stack');
 const s9mediaBox = $('s9mediaBox');
 const s9lines    = [$('s9l0'), $('s9l1'), $('s9l2')];
 
-const SCENES = ['s1','s2','s3','s4','s5','s6','s7','s8','s9',
-                's10','s11','s12','s13','s14','s15','s16','s17','s18','s19','s20',
+const SCENES = ['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9',
+                's10','s11','s12','s13','s14','s15','s16','s17','s17b','s18','s19','s20',
                 's21','s22','s23','s24','s25','s26','s27','s28','s29','s30','s31','s32'];
 
 /* ---- scene 14's line, built as word spans so "magic" can be inserted ---- */
@@ -826,117 +909,121 @@ const FLAT = new Set(['s9happy','s9sad','s9zoom']);   // crossfade in place, no 
    THE BEAT LIST — 1:1 with the storyboard. Index 0 is the opening state.
    ======================================================================== */
 const SEQ = [
-  { t:'init',  scene:'s1' },                       //  0  S1 title
-  { t:'show',  el:'s1media' },                     //  1  thinking-emoji.gif
-  { t:'slide', scene:'s2', dir:'right' },          //  2
-  { t:'show',  el:'s2w0' },                        //  3  time
-  { t:'show',  el:'s2w1' },                        //  4  money
-  { t:'show',  el:'s2w2' },                        //  5  energy
-  { t:'slide', scene:'s3', dir:'right' },          //  6
-  { t:'show',  el:'s3w0' },                        //  7  health
-  { t:'show',  el:'s3w1' },                        //  8  relationships
-  { t:'show',  el:'s3w2' },                        //  9  education
-  { t:'slide', scene:'s4', dir:'bottom' },         // 10
-  { t:'show',  el:'s4media' },                     // 11  kidSchool.png
-  { t:'slide', scene:'s5', dir:'right' },          // 12
-  { t:'show',  el:'s5media' },                     // 13  buying.jpg
-  { t:'slide', scene:'s6', dir:'bottom' },         // 14
-  { t:'show',  el:'s6media' },                     // 15  risk.mp4
-  { t:'slide', scene:'s7', dir:'right' },          // 16
-  { t:'show',  el:'s7media' },                     // 17  bondOrShare.jpg
-  { t:'show',  el:'bondsWord' },                   // 18  Bonds
-  { t:'show',  el:'sharesWord' },                  // 19  Shares
-  { t:'zoomA' },                                   // 20  ZOOM A  -> scene 8
-  { t:'sentence' },                                // 21  the bond sentence
-  { t:'zoomB' },                                   // 22  ZOOM B  -> isolate "promise"
-  { t:'show',  el:'s8media' },                     // 23  promise.jpg
-  { t:'slide', scene:'s9', dir:'bottom' },         // 24
-  { t:'show',  el:'s9l0' },                        // 25  Shares are simple
-  { t:'show',  el:'s9l1' },                        // 26  they can go up
-  { t:'show',  el:'s9happy' },                     // 27  happy.jpg
-  { t:'show',  el:'s9l2' },                        // 28  they can go down
-  { t:'swap',  from:'s9happy', to:'s9sad' },       // 29  sad.jpg
-  { t:'graph' },                                   // 30  graph.jpg (already nested)
-  { t:'zoomC' },                                   // 31  ZOOM C  -> patience.jpg
-  { t:'show',  el:'s9final' },                     // 32  closing line
+  { t:'init',  scene:'s0' },                       //   0  investor
+  { t:'slide', scene:'s1', dir:'right' },          //   1
+  { t:'show',  el:'s1media' },                     //   2  thinking-emoji.gif
+  { t:'slide', scene:'s2', dir:'right' },          //   3
+  { t:'show',  el:'s2w0' },                        //   4  time
+  { t:'show',  el:'s2w1' },                        //   5  money
+  { t:'show',  el:'s2w2' },                        //   6  energy
+  { t:'slide', scene:'s3', dir:'right' },          //   7
+  { t:'show',  el:'s3w0' },                        //   8  health
+  { t:'show',  el:'s3w1' },                        //   9  relationships
+  { t:'show',  el:'s3w2' },                        //  10  education
+  { t:'slide', scene:'s4', dir:'bottom' },         //  11
+  { t:'show',  el:'s4media' },                     //  12  kidSchool.png
+  { t:'slide', scene:'s5', dir:'right' },          //  13
+  { t:'show',  el:'s5media' },                     //  14  buying.jpg
+  { t:'slide', scene:'s6', dir:'bottom' },         //  15
+  { t:'show',  el:'s6media' },                     //  16  risk.mp4
+  { t:'slide', scene:'s7', dir:'right' },          //  17
+  { t:'show',  el:'s7media' },                     //  18  bondOrShare.jpg
+  { t:'show',  el:'bondsWord' },                   //  19  Bonds
+  { t:'show',  el:'sharesWord' },                  //  20  Shares
+  { t:'zoomA' },                                   //  21  ZOOM A  -> scene 8
+  { t:'sentence' },                                //  22  the bond sentence
+  { t:'table' },                                   //  23  the bond table
+  { t:'zoomB' },                                   //  24  ZOOM B  -> isolate "promise"
+  { t:'show',  el:'s8media' },                     //  25  promise.jpg
+  { t:'group', els:['s8a0','s8a1','s8a2','s8a3'] },//  26  what backs the promise
+  { t:'slide', scene:'s9', dir:'bottom' },         //  27
+  { t:'show',  el:'s9l0' },                        //  28  Shares are simple
+  { t:'show',  el:'s9l1' },                        //  29  they can go up
+  { t:'show',  el:'s9happy' },                     //  30  happy.jpg
+  { t:'show',  el:'s9l2' },                        //  31  they can go down
+  { t:'swap',  from:'s9happy', to:'s9sad' },       //  32  sad.jpg
+  { t:'graph' },                                   //  33  graph.jpg (already nested)
+  { t:'zoomC' },                                   //  34  ZOOM C  -> patience.jpg
+  { t:'show',  el:'s9final' },                     //  35  closing line
 
   /* ---------------------- ACT TWO — story time ---------------------- */
-  { t:'cut',   scene:'s10' },                      // 33  blackout into act two
-  { t:'slide', scene:'s11', dir:'right' },         // 34
-  { t:'show',  el:'s11media' },                    // 35  running.png, left half only
-  { t:'show',  el:'s11line' },                     // 36  field sales
-  { t:'clip',  el:'s11clip' },                     // 37  the right half completes it
-  { t:'slide', scene:'s12', dir:'right' },         // 38
-  { t:'show',  el:'s12media' },                    // 39  bondsOrShares.png
-  { t:'show',  el:'s12a' },                        // 40  wanna checkout my ...pdf
-  { t:'show',  el:'s12b' },                        // 41  ew PDF, NO!!
-  { t:'slide', scene:'s13', dir:'bottom' },        // 42
-  { t:'show',  el:'s13line', hide:'s13dots' },     // 43  off the cliff... (dots leave)
-  { t:'show',  el:'s13media' },                    // 44  pushed.png
-  { t:'slide', scene:'s14', dir:'bottom' },        // 45
-  { t:'show',  el:'s14media' },                    // 46  pond.png
-  { t:'show',  el:'s14line' },                     // 47  into the pond
-  { t:'insert' },                                  // 48  -> into the magic pond
-  { t:'show',  el:'s14want' },                     // 49  what do you want
-  { t:'show',  el:'s14inv' },                      // 50  investor !
-  { t:'slide', scene:'s15', dir:'right' },         // 51
-  { t:'confetti', el:'s15title' },                 // 52  he got the investor + burst
-  { t:'slide', scene:'s16', dir:'right' },         // 53
-  { t:'show',  el:'s16media' },                    // 54  office.jpg, tight on the guy
-  { t:'show',  el:'s16line' },                     // 55  joe
-  { t:'nest',  id:'s16media', to:1 },              // 56  pull back to the whole room
-  { t:'slide', scene:'s17', dir:'bottom' },        // 57
-  { t:'xl',    el:'s17xl' },                       // 58  spreadsheet flythrough
-  { t:'show',  el:'s17line' },                     // 59  into a XL sheet
-  { t:'slide', scene:'s18', dir:'right' },         // 60
-  { t:'show',  el:'s18left' },                     // 61  office crop, left
-  { t:'show',  el:'s18f1' },                       // 62  bondsAndShares...pdf
-  { t:'show',  el:'s18f2' },                       // 63  not in approved...pdf
-  { t:'show',  el:'s18right' },                    // 64  call.png, right
-  { t:'slide', scene:'s19', dir:'right' },         // 65
-  { t:'xl',    el:'s19xl' },                       // 66  spreadsheet flythrough
-  { t:'show',  el:'s19line' },                     // 67  into a different XL sheet
-  { t:'slide', scene:'s20', dir:'bottom' },        // 68
-  { t:'slide', scene:'s21', dir:'right' },         // 69
-  { t:'show',  el:'s21media' },                    // 70  ancient.jpg
-  { t:'show',  el:'s21line' },                     // 71  ancient guy (kyc approver)
-  { t:'slide', scene:'s22', dir:'bottom' },        // 72
-  { t:'slide', scene:'s23', dir:'right' },         // 73
-  { t:'xl',    el:'s23xl' },                       // 74  the wrong-cell variant
-  { t:'show',  el:'s23line' },                     // 75  updated kyc status on wrong cell
-  { t:'slide', scene:'s24', dir:'bottom' },        // 76
-  { t:'show',  el:'s24media' },                    // 77  office crop, centred small
-  { t:'group', els:['s24l0','s24l1','s24l2'] },    // 78
-  { t:'group', els:['s24l3','s24l4'] },            // 79
-  { t:'group', els:['s24l5','s24l6'] },            // 80
-  { t:'slide', scene:'s25', dir:'right' },         // 81
-  { t:'show',  el:'s25media' },                    // 82  imagine.jpg, full
-  { t:'nest',  id:'s25media', to:0 },              // 83  slow push in to the face
-  { t:'slide', scene:'s26', dir:'bottom' },        // 84
-  { t:'show',  el:'s26a' },                        // 85  call.png
-  { t:'show',  el:'s26b' },                        // 86  imagine.jpg face crop
-  { t:'show',  el:'s26c' },                        // 87  office.jpg face crop
-  { t:'slide', scene:'s27', dir:'right' },         // 88
-  { t:'show',  el:'s27line' },                     // 89  they gave all the files and ..
-  { t:'show',  el:'s27media' },                    // 90  dump.png
-  { t:'slide', scene:'s28', dir:'bottom' },        // 91
+  { t:'cut',   scene:'s10' },                      //  36  blackout into act two
+  { t:'slide', scene:'s11', dir:'right' },         //  37
+  { t:'show',  el:'s11media' },                    //  38  running.png, left half only
+  { t:'show',  el:'s11line' },                     //  39  field sales
+  { t:'clip',  el:'s11clip' },                     //  40  the right half completes it
+  { t:'slide', scene:'s12', dir:'right' },         //  41
+  { t:'show',  el:'s12media' },                    //  42  bondsOrShares.png
+  { t:'show',  el:'s12a' },                        //  43  wanna checkout my ...pdf
+  { t:'show',  el:'s12b' },                        //  44  ew PDF, NO!!
+  { t:'slide', scene:'s13', dir:'bottom' },        //  45
+  { t:'show',  el:'s13line', hide:'s13dots' },     //  46  off the cliff... (dots leave)
+  { t:'show',  el:'s13media' },                    //  47  pushed.png
+  { t:'slide', scene:'s14', dir:'bottom' },        //  48
+  { t:'show',  el:'s14media' },                    //  49  pond.png
+  { t:'show',  el:'s14line' },                     //  50  into the pond
+  { t:'insert' },                                  //  51  -> into the magic pond
+  { t:'show',  el:'s14want' },                     //  52  what do you want
+  { t:'show',  el:'s14inv' },                      //  53  investor !
+  { t:'slide', scene:'s15', dir:'right' },         //  54
+  { t:'confetti', el:'s15title' },                 //  55  he got the investor + burst
+  { t:'slide', scene:'s16', dir:'right' },         //  56
+  { t:'show',  el:'s16media' },                    //  57  office.jpg, tight on the guy
+  { t:'show',  el:'s16line' },                     //  58  joe
+  { t:'nest',  id:'s16media', to:1 },              //  59  pull back to the whole room
+  { t:'slide', scene:'s17', dir:'bottom' },        //  60
+  { t:'xl',    el:'s17xl' },                       //  61  spreadsheet flythrough
+  { t:'show',  el:'s17line' },                     //  62  into a XL sheet
+  { t:'slide', scene:'s17b', dir:'bottom' },       //  63  he saw huge mistake patrick made
+  { t:'slide', scene:'s18', dir:'right' },         //  64
+  { t:'show',  el:'s18left' },                     //  65  office crop, left
+  { t:'show',  el:'s18f1' },                       //  66  bondsAndShares...pdf
+  { t:'show',  el:'s18f2' },                       //  67  not in approved...pdf
+  { t:'show',  el:'s18right' },                    //  68  call.png, right
+  { t:'slide', scene:'s19', dir:'right' },         //  69
+  { t:'xl',    el:'s19xl' },                       //  70  spreadsheet flythrough
+  { t:'show',  el:'s19line' },                     //  71  into a different XL sheet
+  { t:'slide', scene:'s20', dir:'bottom' },        //  72
+  { t:'slide', scene:'s21', dir:'right' },         //  73
+  { t:'show',  el:'s21media' },                    //  74  ancient.jpg
+  { t:'show',  el:'s21line' },                     //  75  ancient guy (kyc approver)
+  { t:'slide', scene:'s22', dir:'bottom' },        //  76
+  { t:'slide', scene:'s23', dir:'right' },         //  77
+  { t:'xl',    el:'s23xl' },                       //  78  the wrong-cell variant
+  { t:'show',  el:'s23line' },                     //  79  updated kyc status on wrong cell
+  { t:'slide', scene:'s24', dir:'bottom' },        //  80
+  { t:'show',  el:'s24media' },                    //  81  office crop, centred small
+  { t:'group', els:['s24l0','s24l1','s24l2'] },    //  82
+  { t:'group', els:['s24l3','s24l4','s24l5'] },    //  83
+  { t:'group', els:['s24l6','s24l7','s24l8'] },    //  84
+  { t:'slide', scene:'s25', dir:'right' },         //  85
+  { t:'show',  el:'s25media' },                    //  86  imagine.jpg, full
+  { t:'nest',  id:'s25media', to:0 },              //  87  slow push in to the face
+  { t:'slide', scene:'s26', dir:'bottom' },        //  88
+  { t:'show',  el:'s26a' },                        //  89  call.png
+  { t:'show',  el:'s26b' },                        //  90  imagine.jpg face crop
+  { t:'show',  el:'s26c' },                        //  91  office.jpg face crop
+  { t:'slide', scene:'s27', dir:'right' },         //  92
+  { t:'show',  el:'s27line' },                     //  93  they gave all the files and ..
+  { t:'show',  el:'s27media' },                    //  94  dump.png
+  { t:'slide', scene:'s28', dir:'bottom' },        //  95
 
   /* --------------------- ACT THREE — the platform -------------------- */
-  { t:'slide', scene:'s29', dir:'right' },         // 92
-  { t:'show',  el:'s29media' },                    // 93  the logo gif, from frame 0
-  { t:'slide', scene:'s30', dir:'bottom' },        // 94
-  { t:'slide', scene:'s31', dir:'right' },         // 95
-  { t:'group', els:['s31l0','s31l1','s31l2','s31l3'] }, // 96
-  { t:'group', els:['s31l4','s31l5','s31l6'] },    // 97
-  { t:'group', els:['s31l7','s31l8','s31l9'] },    // 98
-  { t:'slide', scene:'s32', dir:'bottom' },        // 99
-  { t:'show',  el:'s32media' }                     // 100 sharebond.png
+  { t:'slide', scene:'s29', dir:'right' },         //  96
+  { t:'show',  el:'s29media' },                    //  97  the logo gif, from frame 0
+  { t:'slide', scene:'s30', dir:'bottom' },        //  98
+  { t:'slide', scene:'s31', dir:'right' },         //  99
+  { t:'group', els:['s31l0','s31l1','s31l2','s31l3'] }, // 100
+  { t:'group', els:['s31l4','s31l5','s31l6'] },    // 101
+  { t:'group', els:['s31l7','s31l8','s31l9'] },    // 102
+  { t:'slide', scene:'s32', dir:'bottom' },        // 103
+  { t:'show',  el:'s32media' }                     // 104 sharebond.png
 ];
 const LAST = SEQ.length - 1;
 
 /* ---- state is always derived from the beat list, never mutated in place - */
 function stateAt(i){
-  const st = { scene:'s1', vis:{}, flat:{}, zoomA:false, zoomB:false, graph:false, zoomC:false,
+  const st = { scene:'s0', vis:{}, flat:{}, zoomA:false, zoomB:false, graph:false, zoomC:false,
                /* act two */ hidden:{}, open:{}, ins:{}, xl:{}, nest:{}, confetti:false };
   for (let k = 0; k <= i; k++){
     const b = SEQ[k];
@@ -949,8 +1036,13 @@ function stateAt(i){
                        st.vis[b.to] = 1; delete st.flat[b.to]; break;
       case 'zoomA':    st.scene = 's8'; st.zoomA = true; break;
       case 'sentence': st.vis.s8sentence = 1; break;
-      case 'zoomB':    st.zoomB = true; delete st.vis.bondsWord; break;
+      case 'table':    st.vis.s8table = 1; break;
+      case 'zoomB':    st.zoomB = true;
+                       delete st.vis.bondsWord; delete st.vis.s8table; break;
+      // the three lines must leave st.vis too, or render() sets them straight
+      // back to shown() one frame after graphTL has faded them out
       case 'graph':    delete st.vis.s9sad; st.flat.s9sad = 1;
+                       ['s9l0','s9l1','s9l2'].forEach(id => delete st.vis[id]);
                        st.vis.s9zoom = 1; st.graph = true; break;
       case 'zoomC':    st.zoomC = true; break;
 
@@ -1014,11 +1106,12 @@ function measure(){
     w._dx = dx/len * 46; w._dy = dy/len * 34;
   });
 
-  /* --- scene 8: once the sentence is gone the block must re-centre, so the
-         image rises by the sentence's full height while the whole stack
-         drifts down by half of it — title down a half, image up a half. --- */
+  /* --- scene 8: zoom B removes BOTH the sentence and the table, so the space
+         freed is sentence + table + the two gaps that went with them. The
+         image rises by all of it while the stack drifts down by half —
+         title down a half, image up a half, block still centred. ---------- */
   const g8 = parseFloat(getComputedStyle(s8stack).rowGap) || 24;
-  S8SHIFT = -(sh + g8);
+  S8SHIFT = -(sh + s8table.offsetHeight + 2 * g8);
   S8STACK = -S8SHIFT / 2;
 
   /* --- scene 9: how much the image may grow into the space the three lines
@@ -1289,7 +1382,8 @@ function confettiFire(){
 }
 
 /* ---- the two label rings ----------------------------------------------- */
-const S24L = ['s24l0','s24l1','s24l2','s24l3','s24l4','s24l5','s24l6'].map($);
+const S24L = ['s24l0','s24l1','s24l2','s24l3','s24l4',
+              's24l5','s24l6','s24l7','s24l8'].map($);
 const S31L = ['s31l0','s31l1','s31l2','s31l3','s31l4',
               's31l5','s31l6','s31l7','s31l8','s31l9'].map($);
 const ARROWS = [];
@@ -1386,6 +1480,36 @@ function buildArrows(ring, hub){
     const L = p.getTotalLength();
     p.style.strokeDasharray = L;
     ARROWS.push({ id: el.id, path: p, len: L });
+  });
+}
+
+/* ---- scene 8's four annotations. They only ever exist in the post-zoom-B
+        state, so this derives the image's box THERE — its normal rect plus the
+        media's own S8SHIFT and the stack's S8STACK — and pins them beside it.
+        Two per side, vertically offset so they read as annotations rather
+        than a ring, and none directly above: the isolated word "promise" is
+        the title up there and a label under it would read as sentence.
+        Nothing in the stack that zoom A and zoom B depend on is touched. -- */
+const S8ANN = [
+  { id:'s8a0', side:-1, f:0.18 },
+  { id:'s8a1', side:-1, f:0.70 },
+  { id:'s8a2', side: 1, f:0.33 },
+  { id:'s8a3', side: 1, f:0.84 }
+];
+function measureS8Ann(){
+  const sc = $('s8'), img = $('s8media').querySelector('img');
+  if (!sc || !sc.clientWidth || !img) return;
+  const sr = sc.getBoundingClientRect(), ir = img.getBoundingClientRect();
+  const top = ir.top - sr.top + S8SHIFT / 2;      // media's own shift + the stack's
+  const left = ir.left - sr.left;
+  const gap = Math.max(16, Math.min(46, sr.width * 0.022));
+  S8ANN.forEach(a => {
+    const el = $(a.id);
+    el.style.left = ''; el.style.top = '';
+    const r = el.getBoundingClientRect();
+    const x = a.side < 0 ? left - gap - r.width : left + ir.width + gap;
+    el.style.left = Math.max(4, Math.min(x, sr.width - r.width - 4)) + 'px';
+    el.style.top  = (top + ir.height * a.f - r.height / 2) + 'px';
   });
 }
 
@@ -1629,6 +1753,12 @@ function render(st){
   });
   gsap.set(promiseWord, (sentOn || st.zoomB)
     ? { opacity:1, x:0, y:0, scale:1 } : { opacity:0, x:0, y:18, scale:1 });
+
+  // scene 8's table — same stage as the sentence, driven the same way
+  if (st.zoomB)             gsap.set(s8table, { opacity:0, x:0, y:16, scale:1 });
+  else if (st.vis.s8table)  gsap.set(s8table, { opacity:1, x:0, y:0,  scale:1 });
+  else                      gsap.set(s8table, { opacity:0, x:0, y:18, scale:1 });
+
   gsap.set(s8mediaBox, { x:0, y: st.zoomB ? S8SHIFT : 0, scale:1 });
   gsap.set(s8stack,    { x:0, y: st.zoomB ? S8STACK : 0, scale:1 });
 
@@ -1719,6 +1849,9 @@ function zoomB(back){
     sentWords.forEach(w => tl.to(w,
       { opacity:0, x:w._dx, y:w._dy, duration:fade, ease:'power2.in' }, 0));
     tl.to(bondsWord, { opacity:0, y:0, scale:1.08, duration:fade, ease:'power2.in' }, 0);
+    // the table leaves on the same curve and in the same window as the words,
+    // so it reads as part of the zoom rather than as a separate event
+    tl.to(s8table, { opacity:0, y:16, duration:fade, ease:'power2.in' }, 0);
     tl.to(s8mediaBox, { y:S8SHIFT, duration:D.zoomB, ease:EASE.zoom }, 0);
     tl.to(s8stack,    { y:S8STACK, duration:D.zoomB, ease:EASE.zoom }, 0);
   } else {
@@ -1729,6 +1862,8 @@ function zoomB(back){
       { opacity:1, x:0, y:0, duration:fade, ease:'power2.out' }, D.zoomB - fade));
     tl.fromTo(bondsWord, { opacity:0, y:0, scale:1.08 },
       { opacity:1, y:0, scale:1, duration:fade, ease:'power2.out' }, D.zoomB - fade);
+    tl.fromTo(s8table, { opacity:0, y:16 },
+      { opacity:1, y:0, duration:fade, ease:'power2.out' }, D.zoomB - fade);
     tl.to(s8mediaBox, { y:0, duration:D.zoomB, ease:EASE.zoom }, 0);
     tl.to(s8stack,    { y:0, duration:D.zoomB, ease:EASE.zoom }, 0);
   }
@@ -1803,6 +1938,12 @@ function buildTL(from, to){
     }
     case 'zoomA':    return zoomA(!fwd);
     case 'sentence': return sentenceTL(!fwd);
+    case 'table':
+      return fwd
+        ? gsap.timeline().fromTo(s8table, { opacity:0, x:0, y:18 },
+            { opacity:1, x:0, y:0, duration:D.reveal, ease:EASE.reveal })
+        : gsap.timeline().to(s8table,
+            { opacity:0, x:0, y:18, duration:D.reveal * .8, ease:'power2.inOut' });
     case 'zoomB':    return zoomB(!fwd);
     case 'graph':    return graphTL(!fwd);
     case 'zoomC':    return zoomC(!fwd);
@@ -1883,6 +2024,25 @@ function pokeCursor(){
 }
 addEventListener('mousemove', pokeCursor);
 
+/* ---- fullscreen toggle -------------------------------------------------
+   Two collisions: there is a window-level click listener bound to go(1), so
+   the click must not bubble; and a focused <button> fires on Space/Enter,
+   which are both next-beat keys, so it gives focus straight back.
+   Esc is handled natively by the Fullscreen API — never bound here.        */
+const fsbtn = $('fsbtn');
+fsbtn.addEventListener('click', e => {
+  e.stopPropagation();
+  const d = document.documentElement;
+  if (!document.fullscreenElement){
+    if (d.requestFullscreen) d.requestFullscreen().catch(()=>{});
+  } else if (document.exitFullscreen){
+    document.exitFullscreen().catch(()=>{});
+  }
+  fsbtn.blur();
+});
+addEventListener('fullscreenchange', () =>
+  document.body.classList.toggle('fs', !!document.fullscreenElement));
+
 /* ---- resize: re-measure, then snap to the current beat, never animate --- */
 let rzT;
 addEventListener('resize', () => {
@@ -1901,7 +2061,7 @@ function remeasure(){
   SCENES.forEach(id => { $(id).style.visibility = 'visible';
     gsap.set($(id), { xPercent:0, yPercent:0, opacity:1, scale:1 }); });
   RV.forEach(el => gsap.set(el, { opacity:0, x:0, y:0, scale:1, rotate:0 }));
-  gsap.set([...sentWords, promiseWord], { opacity:0, x:0, y:0, scale:1 });
+  gsap.set([...sentWords, promiseWord, s8table], { opacity:0, x:0, y:0, scale:1 });
   gsap.set([s8stack, s8mediaBox, s9mediaBox], { x:0, y:0, scale:1 });
   // insertBefore, not appendChild: appending puts "Bonds" AFTER "Shares", and
   // measure() then lays the pair out in DOM order, silently swapping the two
@@ -1909,6 +2069,7 @@ function remeasure(){
   if (bondsWord.parentNode !== $('s7pair')){ $('s7pair').insertBefore(bondsWord, sharesWord); bondsWord.classList.remove('as-title'); }
   if (promiseWord.parentNode !== sentEl){ sentEl.insertBefore(promiseWord, promiseAnchor); promiseWord.classList.remove('as-title'); }
   measure();
+  measureS8Ann();
   measureAct2();
 }
 
